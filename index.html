@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vamika Estate CRM</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="logo-round.png">
+  <link rel="stylesheet" href="styles.css">
+  <!-- OneSignal: To enable push, paste your OneSignal Web SDK here and set appId in Settings -->
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="logo"><img src="logo-round.png" style="width:100%;height:100%;object-fit:cover;"></div>
+      <div>
+        <div class="title">Vamika Estate CRM</div>
+        <div class="subtitle">Hiren Gohel • 7046869462</div>
+      </div>
+      <div class="top-actions">
+        <button id="enablePush" class="btn">Enable Notifications</button>
+        <button id="addLeadBtn" class="btn">+ Add Lead</button>
+      </div>
+    </div>
+
+    <div class="tabbar">
+      <div id="tab-leads" class="tab active" onclick="showTab('leads')">Leads</div>
+      <div id="tab-projects" class="tab" onclick="showTab('projects')">Projects</div>
+      <div id="tab-followups" class="tab" onclick="showTab('followups')">Today Follow-ups</div>
+      <div id="tab-settings" class="tab" onclick="showTab('settings')">Settings</div>
+    </div>
+
+    <!-- Leads Page -->
+    <div id="page-leads" class="card">
+      <div id="leadForm" class="card hidden">
+        <h3>Add Lead</h3>
+        <div class="grid">
+          <div>
+            <div class="field"><label>Name</label><input id="leadName" placeholder="Client name"></div>
+            <div class="field"><label>Phone (with country code, e.g. 91...)</label><input id="leadPhone" placeholder="9198xxxxxxxx"></div>
+            <div class="field"><label>Requirement</label><input id="leadReq" placeholder="2BHK / 3BHK"></div>
+            <div class="field"><label>Location</label><input id="leadLoc" placeholder="Shela, Ahmedabad"></div>
+          </div>
+          <div>
+            <div class="field"><label>Budget</label><input id="leadBudget" placeholder="e.g. 53 Lacs"></div>
+            <div class="field"><label>Status</label><select id="leadStatus"><option>New</option><option>Contacted</option><option>Follow-up</option><option>Closed</option></select></div>
+            <div class="field"><label>Follow-up (date & time) *</label><input id="leadFollow" type="datetime-local"></div>
+            <div class="field"><label>Notes</label><textarea id="leadNotes" rows="3"></textarea></div>
+          </div>
+        </div>
+        <div style="text-align:right;margin-top:8px;"><button id="saveLead" class="btn">Save</button> <button id="cancelLead" class="btn" style="background:#888;">Cancel</button></div>
+      </div>
+
+      <h3>Leads</h3>
+      <div id="leadsList"></div>
+    </div>
+
+    <!-- Projects Page -->
+    <div id="page-projects" class="card hidden">
+      <h3>Projects</h3>
+      <div class="grid">
+        <div>
+          <div class="field"><label>Project Name</label><input id="propTitle" placeholder="Project title"></div>
+          <div class="field"><label>Location</label><input id="propLocation" placeholder="Location"></div>
+          <div class="field"><label>Configuration</label><select id="propConfig"><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option><option>5 BHK</option><option>6 BHK</option></select></div>
+        </div>
+        <div>
+          <div class="field"><label>Size (sqft)</label><input id="propSize" placeholder="e.g. 1040"></div>
+          <div class="field"><label>Price</label><input id="propPrice" placeholder="e.g. 53 Lacs"></div>
+          <div class="field"><label>Photo (1 image)</label><input id="propImage" type="file" accept="image/*"></div>
+        </div>
+      </div>
+      <div class="field"><label>Description</label><textarea id="propDesc" rows="3" placeholder="Short description"></textarea></div>
+      <div style="text-align:right"><button id="saveProp" class="btn">Save Project</button></div>
+      <div id="propList" style="margin-top:12px"></div>
+    </div>
+
+    <!-- Follow-ups Page -->
+    <div id="page-followups" class="card hidden">
+      <h3>Today Follow-ups</h3>
+      <div id="remindersList"></div>
+    </div>
+
+    <!-- Settings Page -->
+    <div id="page-settings" class="card hidden">
+      <h3>Settings</h3>
+      <div class="settings-row"><div>Dark Mode</div><div class="switch" onclick="setTheme(!document.body.classList.contains('dark'))"><div class="knob" id="knob" style="left:3px"></div></div></div>
+      <div class="settings-row"><div>OneSignal App ID (for Push)</div><div><input id="onesignalId" placeholder="put your OneSignal web App ID here"><div style="margin-top:8px"><button id="saveSettings" class="btn">Save Settings</button></div></div></div>
+      <div class="settings-row"><div>Export Leads (CSV)</div><div><button id="exportLeads" class="btn">Export</button></div></div>
+      <div class="settings-row"><div>Clear All Data</div><div><button class="btn" style="background:#d9534f;color:#fff" onclick="if(confirm('Clear all local data?')){ localStorage.clear(); location.reload(); }">Clear</button></div></div>
+    </div>
+
+    <div class="footer">Made for Vamika Estate • Add to Home Screen for app-like experience</div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
