@@ -1,1 +1,0 @@
-delete worker file
