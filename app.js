@@ -84,8 +84,10 @@ function callLead(index){
 function whatsappLead(index){
   const l = leads[index];
   if(!l || !l.phone){ alert('No phone number'); return; }
+
   const text = `Namaste ${l.name} 🙏%0AWe have details as per your requirement:%0A${l.requirement} • ${l.location} • Budget: ${l.budget}%0ACall: 7046869462`;
-  const url = `https://wa.me/${l.phone.replace(/\D/g,'')}?text=${text}`;
+
+  const url = `https://wa.me/${l.phone.replace(/\\D/g,'')}?text=${text}`;
   window.open(url, '_blank');
 }
 
