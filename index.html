@@ -4,46 +4,117 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Vamika Estate CRM</title>
+  <link rel="manifest" href="manifest.json"/>
   <link rel="stylesheet" href="styles.css"/>
+  <meta name="theme-color" content="#071421"/>
 </head>
-<body class="light">
+<body class="dark">
   <header class="topbar">
     <div class="brand">
-      <img src="logo.png" class="logo"/>
-      <div>
+      <img src="logo.png" alt="logo" class="logo"/>
+      <div class="brand-text">
         <h1>Vamika Estate CRM</h1>
         <small>Hiren Gohel • 7046869462</small>
       </div>
     </div>
     <div class="top-actions">
-      <button id="askNotif" class="btn">🔔</button>
-      <button id="installBtn" class="btn hidden">⬇ Install</button>
+      <button id="askNotif" class="btn icon" title="Enable Notifications">🔔</button>
+      <button id="installBtn" class="btn install hidden" title="Install app">⬇ Install</button>
+      <button id="themeToggle" class="btn icon" title="Toggle theme">🌗</button>
     </div>
   </header>
 
   <main class="container">
-    <nav class="tabs">
+    <nav class="tabs" role="tablist" aria-label="Main tabs">
       <button class="tab active" data-tab="leads">Leads</button>
       <button class="tab" data-tab="projects">Projects</button>
-      <button class="tab" data-tab="today">Today</button>
+      <button class="tab" data-tab="today">Today Follow-ups</button>
       <button class="tab" data-tab="settings">Settings</button>
     </nav>
 
-    <section id="leads" class="view">
+    <section id="leads" class="view" role="tabpanel">
       <div class="controls-row">
-        <input placeholder="Search leads..."/>
-        <button class="btn primary">+ New Lead</button>
+        <input id="leadSearch" placeholder="Search leads..." />
+        <button id="newLeadBtn" class="btn primary">+ New Lead</button>
       </div>
-      <ul class="list"></ul>
+      <ul id="leadList" class="list">
+        <li class="item">
+          <div>
+            <strong class="name">Karishma Gohel</strong>
+            <div class="meta">917016430321 • 5BHK • Follow: 12/1/2025, 6:15 PM</div>
+          </div>
+          <div class="item-actions">
+            <button class="btn small">WhatsApp</button>
+            <button class="btn small">Send Project</button>
+            <button class="btn small">Edit</button>
+            <button class="btn small danger">Delete</button>
+          </div>
+        </li>
+      </ul>
     </section>
 
-    <section id="projects" class="view hidden">
+    <section id="projects" class="view hidden" role="tabpanel">
       <div class="controls-row">
-        <input placeholder="Search projects..."/>
-        <button class="btn primary">+ New Project</button>
+        <input id="projectSearch" placeholder="Search projects..." />
+        <button id="newProjectBtn" class="btn primary">+ New Project</button>
       </div>
-      <ul class="list"></ul>
+      <ul id="projectList" class="list"></ul>
+    </section>
+
+    <section id="today" class="view hidden" role="tabpanel">
+      <h3 class="section-title">Follow-ups for Today</h3>
+      <ul id="todayList" class="list"></ul>
+    </section>
+
+    <section id="settings" class="view hidden" role="tabpanel">
+      <h3 class="section-title">Settings</h3>
+      <label>App name:
+        <input id="appName" value="Vamika Estate CRM" />
+      </label>
+      <label>WhatsApp signature:
+        <input id="waSignature" placeholder="- Hiren, Vamika Estate" />
+      </label>
+      <div class="form-actions">
+        <button id="exportBtn" class="btn">Export</button>
+        <button id="importBtn" class="btn">Import</button>
+      </div>
     </section>
   </main>
+
+  <!-- Lead Modal -->
+  <div id="leadModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <h2>New Lead</h2>
+      <form id="leadForm">
+        <label>Name<input id="leadName" required/></label>
+        <label>Phone<input id="leadPhone" required/></label>
+        <label>Requirement<input id="leadReq" /></label>
+        <label>Note<textarea id="leadNote" rows="3"></textarea></label>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Save</button>
+          <button type="button" id="closeLeadModal" class="btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Project Modal -->
+  <div id="projectModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <h2>New Project</h2>
+      <form id="projectForm">
+        <label>Project name<input id="projName" required/></label>
+        <label>Message<textarea id="projMsg" rows="3"></textarea></label>
+        <label>Image URL<input id="projImage" placeholder="https://..." /></label>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Save</button>
+          <button type="button" id="closeProjectModal" class="btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="install.js"></script>
 </body>
-</html>
+              </html>
