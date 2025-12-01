@@ -1,0 +1,79 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Leads - Vamika CRM</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="drawer" id="drawer">
+    <div class="item" onclick="navigate('leads.html')">Leads</div>
+    <div class="item" onclick="navigate('projects.html')">Projects</div>
+    <div class="item" onclick="navigate('followups.html')">Follow-ups</div>
+    <div class="item" onclick="navigate('settings.html')">Settings</div>
+    <div style="height:20px"></div>
+    <div class="item" onclick="closeDrawer()">Close</div>
+  </div>
+
+  <div class="header">
+    <button class="hamburger" onclick="openDrawer()">☰</button>
+    <div class="logo"><img id="logoImg" src="logo-round.png" style="width:100%;height:100%;object-fit:cover"></div>
+    <div class="brand"><div class="title" id="brandTitle">Vamika Estate</div><div class="sub" id="brandSub">Hiren Gohel • 7046869462</div></div>
+    <button class="notify-btn" onclick="alert('Notifications need OneSignal setup')">Enable Notifications</button>
+  </div>
+
+  <div class="container">
+    <div class="search-row">
+      <input id="search" class="search" placeholder="Search leads by name or phone..." oninput="renderList()">
+      <button class="add-btn" onclick="document.getElementById('leadForm').scrollIntoView({behavior:'smooth'})">+ New Lead</button>
+    </div>
+
+    <div id="leadForm" class="card">
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <input id="name" class="input" placeholder="Name" style="flex:1;min-width:160px">
+        <input id="phone" class="input" placeholder="Phone" style="width:180px">
+        <input id="req" class="input" placeholder="Requirement" style="width:160px">
+        <input id="loc" class="input" placeholder="Location" style="width:160px">
+        <input id="budget" class="input" placeholder="Budget" style="width:160px">
+        <input id="follow" class="input" type="datetime-local" style="width:220px">
+        <textarea id="notes" class="input" placeholder="Notes" style="flex-basis:100%"></textarea>
+        <button class="btn" onclick="saveLead()">Save Lead</button>
+      </div>
+    </div>
+
+    <div id="list"></div>
+
+    <div class="footer">Made for Vamika Estate • Add to Home Screen</div>
+  </div>
+
+<script src="common.js"></script>
+<script>
+function saveLead(){
+  const name=document.getElementById('name').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const follow=document.getElementById('follow').value;
+  if(!name||!phone||!follow){ alert('Enter name, phone and follow-up'); return; }
+  const lead={name,phone,req:document.getElementById('req').value,loc:document.getElementById('loc').value,budget:document.getElementById('budget').value,notes:document.getElementById('notes').value,follow,created:new Date().toISOString()};
+  leads.unshift(lead); saveAll(); renderList(); document.getElementById('name').value=''; document.getElementById('phone').value=''; document.getElementById('follow').value=''; alert('Lead saved');
+}
+function renderList(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const el=document.getElementById('list'); el.innerHTML='';
+  if(leads.length===0){ el.innerHTML='<div class="card">No leads yet</div>'; return; }
+  leads.filter(l=> l.name.toLowerCase().includes(q) || (l.phone||'').includes(q)).forEach((l,i)=>{
+    const div=document.createElement('div'); div.className='lead-card';
+    div.innerHTML = '<div class="lead-left"><div class="lead-name">'+escapeHtml(l.name)+'</div><div class="lead-meta">'+escapeHtml(l.phone)+' • '+escapeHtml(l.req)+' • '+escapeHtml(l.loc)+'</div><div class="lead-meta" style="margin-top:8px">Follow: '+l.follow+'</div></div><div class="lead-actions"><button class="btn-wa" onclick="openWhatsApp('+i+')">WhatsApp</button><button class="btn-send" onclick="alert(\'Select project then Share from Projects page\')">Send Project</button><button class="btn-edit" onclick="editLead('+i+')">Edit</button><button class="btn-del" onclick="deleteLead('+i+')">Delete</button></div>';
+    el.appendChild(div);
+  });
+}
+function openWhatsApp(i){ const l=leads[i]; const text='Hello '+l.name+'%0ARequirement: '+l.req+'%0ALocation: '+l.loc+'%0ABudget: '+l.budget; window.open('https://wa.me/'+l.phone.replace(/\D/g,'')+'?text='+encodeURIComponent(text),'_blank'); }
+function editLead(i){ const l=leads.splice(i,1)[0]; saveAll(); document.getElementById('name').value=l.name; document.getElementById('phone').value=l.phone; document.getElementById('req').value=l.req; document.getElementById('loc').value=l.loc; document.getElementById('budget').value=l.budget; document.getElementById('follow').value=l.follow; document.getElementById('notes').value=l.notes; window.scrollTo({top:0,behavior:'smooth'}); }
+function deleteLead(i){ if(confirm('Delete lead?')){ leads.splice(i,1); saveAll(); renderList(); } }
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+document.addEventListener('DOMContentLoaded', ()=>{ renderHeader(); renderList(); });
+</script>
+</body>
+</html>

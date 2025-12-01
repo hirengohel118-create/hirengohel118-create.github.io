@@ -1,0 +1,15 @@
+{
+  "name": "Vamika Estate CRM",
+  "short_name": "VamikaCRM",
+  "start_url": "leads.html",
+  "display": "standalone",
+  "background_color": "#071024",
+  "theme_color": "#1A2238",
+  "icons": [
+    {
+      "src": "logo-round.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

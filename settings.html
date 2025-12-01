@@ -1,0 +1,61 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Settings - Vamika CRM</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="drawer" id="drawer">
+    <div class="item" onclick="navigate('leads.html')">Leads</div>
+    <div class="item" onclick="navigate('projects.html')">Projects</div>
+    <div class="item" onclick="navigate('followups.html')">Follow-ups</div>
+    <div class="item" onclick="navigate('settings.html')">Settings</div>
+    <div style="height:20px"></div>
+    <div class="item" onclick="closeDrawer()">Close</div>
+  </div>
+
+  <div class="header">
+    <button class="hamburger" onclick="openDrawer()">☰</button>
+    <div class="logo"><img id="logoImg" src="logo-round.png" style="width:100%;height:100%;object-fit:cover"></div>
+    <div class="brand"><div class="title" id="brandTitle">Vamika Estate</div><div class="sub" id="brandSub">Hiren Gohel • 7046869462</div></div>
+    <button class="notify-btn" onclick="alert('Notifications need OneSignal setup')">Enable Notifications</button>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h3>Settings & Profile</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:240px">
+          <div class="small">Business name</div><input id="prof_business" class="input" placeholder="Vamika Estate">
+          <div class="small">Owner</div><input id="prof_owner" class="input" placeholder="Hiren Gohel">
+          <div class="small">Phone</div><input id="prof_phone" class="input" placeholder="7046869462">
+          <div class="small">Email</div><input id="prof_email" class="input" placeholder="">
+          <div class="small">Address</div><input id="prof_address" class="input" placeholder="">
+          <button class="btn" id="saveProfileBtn">Save Profile</button>
+        </div>
+        <div style="width:320px">
+          <div class="small">Theme accent (HEX)</div><input id="accentInput" class="input" placeholder="#3B82F6">
+          <div class="small" style="margin-top:8px">Upload logo</div><input id="logoUpload" class="input" type="file" accept="image/*">
+          <div style="margin-top:8px"><button class="btn" id="exportBtn">Export Backup</button><input id="importBackup" type="file" accept="application/json" class="input" style="margin-top:8px"></div>
+          <div style="margin-top:12px"><div class="small">Total leads</div><div class="counter" id="leadCount">0</div><div class="small" style="margin-top:8px">Total projects</div><div class="counter" id="projectCount">0</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Made for Vamika Estate • Add to Home Screen for app-like experience</div>
+  </div>
+
+<script src="common.js"></script>
+<script>
+function saveProfile(){ profile.business=document.getElementById('prof_business').value.trim(); profile.owner=document.getElementById('prof_owner').value.trim(); profile.phone=document.getElementById('prof_phone').value.trim(); profile.email=document.getElementById('prof_email').value.trim(); profile.address=document.getElementById('prof_address').value.trim(); saveAll(); alert('Profile saved'); renderHeader(); }
+function exportBackup(){ const data={leads,projects,profile}; const blob=new Blob([JSON.stringify(data)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='vamika_backup.json'; a.click(); URL.revokeObjectURL(url);}
+function importBackup(e){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ try{ const obj=JSON.parse(ev.target.result); if(obj.leads) leads=obj.leads; if(obj.projects) projects=obj.projects; if(obj.profile) profile=obj.profile; saveAll(); alert('Imported'); }catch(err){ alert('Invalid file'); } }; r.readAsText(f); }
+function uploadLogo(e){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(ev){ localStorage.setItem('logo-data',ev.target.result); document.getElementById('logoImg').src=ev.target.result; alert('Logo updated'); }; r.readAsDataURL(f); }
+document.addEventListener('DOMContentLoaded', ()=>{ renderHeader(); document.getElementById('saveProfileBtn')?.addEventListener('click', saveProfile); document.getElementById('exportBtn')?.addEventListener('click', exportBackup); document.getElementById('importBackup')?.addEventListener('change', importBackup); document.getElementById('logoUpload')?.addEventListener('change', uploadLogo); document.getElementById('accentInput')?.addEventListener('change', ()=>{ document.documentElement.style.setProperty('--accent', document.getElementById('accentInput').value || '#3B82F6'); }); });
+</script>
+</body>
+</html>

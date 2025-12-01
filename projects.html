@@ -1,0 +1,69 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Projects - Vamika CRM</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="drawer" id="drawer">
+    <div class="item" onclick="navigate('leads.html')">Leads</div>
+    <div class="item" onclick="navigate('projects.html')">Projects</div>
+    <div class="item" onclick="navigate('followups.html')">Follow-ups</div>
+    <div class="item" onclick="navigate('settings.html')">Settings</div>
+    <div style="height:20px"></div>
+    <div class="item" onclick="closeDrawer()">Close</div>
+  </div>
+
+  <div class="header">
+    <button class="hamburger" onclick="openDrawer()">☰</button>
+    <div class="logo"><img id="logoImg" src="logo-round.png" style="width:100%;height:100%;object-fit:cover"></div>
+    <div class="brand"><div class="title" id="brandTitle">Vamika Estate</div><div class="sub" id="brandSub">Hiren Gohel • 7046869462</div></div>
+    <button class="notify-btn" onclick="alert('Notifications need OneSignal setup')">Enable Notifications</button>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <input id="ptitle" class="input" placeholder="Project title" style="flex:1;min-width:180px">
+        <input id="ploc" class="input" placeholder="Location" style="width:200px">
+        <select id="pconfig" class="input" style="width:160px"><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option><option>5 BHK</option><option>6 BHK</option></select>
+        <input id="psize" class="input" placeholder="Size" style="width:120px">
+        <input id="pprice" class="input" placeholder="Price" style="width:160px">
+        <input id="pimg" class="input" type="file" accept="image/*" style="width:220px">
+        <textarea id="pdesc" class="input" placeholder="Short description" style="flex-basis:100%"></textarea>
+        <button class="btn" onclick="saveProject()">Save Project</button>
+      </div>
+    </div>
+
+    <div id="projectsList"></div>
+
+    <div class="footer">Made for Vamika Estate • Add to Home Screen</div>
+  </div>
+
+<script src="common.js"></script>
+<script>
+function saveProject(){
+  const title=document.getElementById('ptitle').value.trim();
+  if(!title){ alert('Enter title'); return; }
+  const file=document.getElementById('pimg').files[0];
+  if(file){
+    const r=new FileReader();
+    r.onload=function(e){ projects.unshift({title,loc:document.getElementById('ploc').value,config:document.getElementById('pconfig').value,size:document.getElementById('psize').value,price:document.getElementById('pprice').value,desc:document.getElementById('pdesc').value,img:e.target.result,created:new Date().toISOString()}); saveAll(); renderProjects(); alert('Project saved'); }
+    r.readAsDataURL(file);
+  } else {
+    projects.unshift({title,loc:document.getElementById('ploc').value,config:document.getElementById('pconfig').value,size:document.getElementById('psize').value,price:document.getElementById('pprice').value,desc:document.getElementById('pdesc').value,img:'',created:new Date().toISOString()});
+    saveAll(); renderProjects(); alert('Project saved');
+  }
+}
+function renderProjects(){ const el=document.getElementById('projectsList'); el.innerHTML=''; if(projects.length===0){ el.innerHTML='<div class="card">No projects yet</div>'; return; } projects.forEach((p,i)=>{ const d=document.createElement('div'); d.className='card'; d.innerHTML='<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div style="flex:1"><div style="font-weight:700">'+escapeHtml(p.title)+'</div><div class="small">'+escapeHtml(p.loc)+' • '+escapeHtml(p.config)+' • '+escapeHtml(p.size)+'</div><div style="margin-top:6px">Price: '+escapeHtml(p.price)+'</div><div class="small" style="margin-top:6px">'+escapeHtml(p.desc||'')+'</div></div><div style="width:140px">'+(p.img?'<img src="'+p.img+'" class="preview">':'<div class="small">No image</div>')+'<div style="margin-top:8px;display:flex;gap:8px"><button class="btn-send" onclick="shareProject('+i+')">Share</button><button class="button-outline" onclick="copyProject('+i+')">Copy</button></div></div></div>'; el.appendChild(d); }); }
+function shareProject(i){ const p=projects[i]; const details='Project: '+p.title+'\nLocation: '+p.loc+'\nConfig: '+p.config+'\nSize: '+p.size+'\nPrice: '+p.price; if(navigator.share && p.img){ fetch(p.img).then(r=>r.blob()).then(b=>{ const f=new File([b],'project.jpg',{type:b.type}); navigator.share({text:details,files:[f]}).catch(()=>alert('Share canceled')); }); } else { window.open('https://wa.me/?text='+encodeURIComponent(details),'_blank'); } }
+function copyProject(i){ const p=projects[i]; navigator.clipboard.writeText('Project: '+p.title+'\nLocation: '+p.loc+'\nPrice: '+p.price).then(()=>alert('Copied')); }
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+document.addEventListener('DOMContentLoaded', ()=>{ renderHeader(); renderProjects(); });
+</script>
+</body>
+</html>
