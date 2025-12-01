@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vamika Estate CRM</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="theme-color" content="#1976d2" />
+  <!-- OneSignal SDK -->
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+  <script>
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "1c10531a-80ef-4cad-9a56-89dc3564bc7c",
+        notifyButton: { enable: true },
+        allowLocalhostAsSecureOrigin: true
+      });
+    });
+  </script>
+  <style>
+    /* hide the topbar theme button (we'll keep it for backward compatibility with app.js) */
+    #themeToggle{ display:none; }
+    /* small styles for settings theme buttons */
+    .theme-btn{padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:#fff;cursor:pointer;margin-right:8px;font-size:18px}
+    .theme-btn.active{box-shadow:0 4px 10px rgba(0,0,0,0.08)}
+    body.dark .theme-btn{background:#0b2130;color:#eaf5ff;border:1px solid rgba(255,255,255,0.06)}
+  </style>
+</head>
+<body class="light">
+  <header class="topbar">
+    <div class="brand">
+      <img src="logo.png" alt="Vamika Estate" class="logo"/>
+      <div>
+        <h1 id="brandTitle">Vamika Estate CRM</h1>
+        <small id="brandSub">Hiren Gohel • 7046869462</small>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button id="themeToggle" class="btn">Theme</button>
+      <button id="askNotif" class="btn">Enable Notifications</button>
+      <button id="installBtn" class="btn" style="display:none">Install</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="tabs">
+      <button data-tab="leads" class="tab active">Leads</button>
+      <button data-tab="props" class="tab">Projects</button>
+      <button data-tab="today" class="tab">Today Follow-ups</button>
+      <button data-tab="settings" class="tab">Settings</button>
+    </nav>
+
+    <section id="leads" class="view">
+      <div class="controls-row">
+        <input id="leadSearch" placeholder="Search leads..." />
+        <button id="newLeadBtn" class="btn primary">+ New Lead</button>
+      </div>
+      <ul id="leadList" class="list"></ul>
+    </section>
+
+    <section id="props" class="view hidden">
+      <div class="controls-row">
+        <input id="propSearch" placeholder="Search projects..." />
+        <button id="newPropBtn" class="btn primary">+ New Project</button>
+      </div>
+      <ul id="propList" class="list"></ul>
+    </section>
+
+    <section id="today" class="view hidden">
+      <h3>Follow-ups for Today</h3>
+      <ul id="todayList" class="list"></ul>
+    </section>
+
+    <section id="settings" class="view hidden">
+      <h3>Settings</h3>
+      <label>App name: <input id="appName" value="Vamika Estate CRM" /></label>
+      <label>Default WhatsApp signature: <input id="waSignature" placeholder="e.g. - Hiren, Vamika Estate" /></label>
+
+      <div style="margin-top:12px">
+        <strong>Appearance</strong>
+        <div style="margin-top:8px">
+          <button id="themeLight" class="theme-btn" title="Light mode">🌞</button>
+          <button id="themeDark" class="theme-btn" title="Dark mode">🌚</button>
+        </div>
+        <p class="muted" style="margin-top:8px">Choose appearance for the app. This setting is saved on your device.</p>
+      </div>
+
+      <p>Data stored locally on your device. No server, no cost.</p>
+      <button id="exportBtn" class="btn">Export Data (JSON)</button>
+      <button id="importBtn" class="btn">Import Data (paste JSON)</button>
+      <button id="clearBtn" class="btn danger">Clear All Data</button>
+    </section>
+  </main>
+
+  <!-- Modals and templates (same as the app.js expects) -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <h2 id="modalTitle">New Lead</h2>
+      <form id="leadForm">
+        <input type="hidden" id="leadId" />
+        <label>Name<input id="leadName" required/></label>
+        <label>Phone<input id="leadPhone" required placeholder="91XXXXXXXXXX or XXXXXXXXXX" /></label>
+        <label>Requirement<input id="leadReq" placeholder="2BHK / 3BHK / Rent" /></label>
+        <label>Note<textarea id="leadNote" rows="3"></textarea></label>
+        <label>Follow-up date & time<input id="leadFollow" type="datetime-local" /></label>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Save</button>
+          <button type="button" id="cancelModal" class="btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="propModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <h2 id="propModalTitle">New Project</h2>
+      <form id="propForm">
+        <input type="hidden" id="propId" />
+        <label>Project Name<input id="propName" required/></label>
+        <label>Short message template<textarea id="propMsg" rows="3" placeholder="Message to send via WhatsApp"></textarea></label>
+        <label>Image URL<input id="propImageUrl" placeholder="https://..." /></label>
+        <div class="small-row">
+          <button id="addImageUrl" type="button" class="btn">Add Image URL</button>
+          <input id="propFile" type="file" accept="image/*" multiple />
+        </div>
+        <div id="propImagesPreview" class="images-preview"></div>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Save</button>
+          <button type="button" id="cancelProp" class="btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <template id="leadTemplate">
+    <li class="item">
+      <div>
+        <strong class="name"></strong>
+        <div class="meta"></div>
+      </div>
+      <div class="item-actions">
+        <button class="btn small whatsapp">WhatsApp</button>
+        <button class="btn small send-template">Send Project</button>
+        <button class="btn small edit">Edit</button>
+        <button class="btn small danger del">Delete</button>
+      </div>
+    </li>
+  </template>
+
+  <template id="propTemplate">
+    <li class="item">
+      <div>
+        <strong class="name"></strong>
+        <div class="meta"></div>
+      </div>
+      <div class="item-actions">
+        <button class="btn small preview">Preview</button>
+        <button class="btn small share">Send to Client</button>
+        <button class="btn small edit">Edit</button>
+        <button class="btn small danger del">Delete</button>
+      </div>
+    </li>
+  </template>
+
+  <script src="app.js"></script>
+  <script>
+    // register service worker (app SW)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(()=>{console.log('sw reg failed')});
+    }
+
+    // PWA install handling (same as original)
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBtn').style.display = 'inline-block';
+      document.getElementById('installBtn').onclick = async () => {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        document.getElementById('installBtn').style.display = 'none';
+      };
+    });
+
+    // Theme controls in Settings (Material-style icons for Android)
+    function updateThemeButtons(theme) {
+      document.getElementById('themeLight').classList.toggle('active', theme === 'light');
+      document.getElementById('themeDark').classList.toggle('active', theme === 'dark');
+    }
+
+    // Initialize theme from localStorage (app.js also reads crm_theme)
+    const saved = localStorage.getItem('crm_theme') || 'light';
+    updateThemeButtons(saved);
+    document.body.classList.remove('light','dark');
+    document.body.classList.add(saved);
+
+    document.getElementById('themeLight').addEventListener('click', () => {
+      localStorage.setItem('crm_theme','light');
+      if (window.setCrmTheme) window.setCrmTheme('light');
+      document.body.classList.remove('dark'); document.body.classList.add('light');
+      updateThemeButtons('light');
+    });
+    document.getElementById('themeDark').addEventListener('click', () => {
+      localStorage.setItem('crm_theme','dark');
+      if (window.setCrmTheme) window.setCrmTheme('dark');
+      document.body.classList.remove('light'); document.body.classList.add('dark');
+      updateThemeButtons('dark');
+    });
+
+    // Small helper to prompt Notification permission if user clicks "Enable Notifications"
+    document.getElementById('askNotif').addEventListener('click', async () => {
+      if(!('Notification' in window)) return alert('Notifications not supported on this device/browser.');
+      const res = await Notification.requestPermission();
+      if(res === 'granted') alert('Notifications enabled. App will remind at follow-up times when allowed.');
+      else alert('Notifications blocked. You can enable from browser settings.');
+    });
+  </script>
+</body>
+</html>
