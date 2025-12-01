@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vamika Estate CRM</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="logo-round.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="logo"><img src="logo-round.png" alt="logo" style="width:100%;height:100%;object-fit:cover"></div>
+      <div>
+        <div class="title">Vamika Estate CRM</div>
+        <div class="small">Power • Trust • Prosperity</div>
+      </div>
+      <div class="top-actions">
+        <button id="themeBtn" class="btn">🌙</button>
+        <button id="addLeadBtn" class="btn">+ Add Lead</button>
+      </div>
+    </div>
+
+    <!-- Add Lead Form -->
+    <div id="leadForm" class="card hidden">
+      <h3>Add Lead</h3>
+      <div class="grid">
+        <div>
+          <div class="field"><label>Name</label><input id="leadName"></div>
+          <div class="field"><label>Phone (with country code e.g. 91...)</label><input id="leadPhone"></div>
+          <div class="field"><label>Requirement</label><input id="leadReq"></div>
+          <div class="field"><label>Location</label><input id="leadLoc"></div>
+        </div>
+        <div>
+          <div class="field"><label>Budget</label><input id="leadBudget"></div>
+          <div class="field"><label>Status</label>
+            <select id="leadStatus">
+              <option>New</option><option>Contacted</option><option>Follow-up</option><option>Closed</option>
+            </select>
+          </div>
+          <div class="field"><label>Follow-up (date & time)</label><input id="leadFollow" type="datetime-local"></div>
+          <div class="field"><label>Notes</label><textarea id="leadNotes" rows="3"></textarea></div>
+        </div>
+      </div>
+      <div style="text-align:right;margin-top:8px">
+        <button id="saveLead" class="btn">Save Lead</button>
+        <button id="cancelLead" class="btn" style="background:#888">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Property Library -->
+    <div class="card" id="propertyCard">
+      <h3>Property Library</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="propTitle" placeholder="Property title">
+        <input id="propPrice" placeholder="Price">
+        <button id="saveProp" class="btn">Save Property</button>
+      </div>
+      <div id="propList"></div>
+    </div>
+
+    <!-- Leads -->
+    <div class="card" id="leadsCard">
+      <h3>Leads</h3>
+      <div id="leadsList"></div>
+    </div>
+
+    <div class="card" id="remindersCard">
+      <h3>Reminders</h3>
+      <div id="remindersList"></div>
+    </div>
+
+    <div class="footer">Made for Vamika Estate • Add to Home Screen for app-like experience</div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
