@@ -1,4 +1,4 @@
-/* FINAL VAMIKA ESTATE THEME */
+/* FINAL VAMIKA CRM THEME */
 
 /* COLORS */
 :root{
@@ -20,14 +20,14 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:Inter,Arial}
 
-/* FIX TABS SHOWING TOGETHER */
+/* HIDDEN / VIEW FIX */
 .hidden{display:none}
 .view{padding:12px}
 
-/* LIGHT THEME */
+/* THEME LIGHT */
 body.light{background:var(--light-bg);color:var(--light-text)}
 
-/* HEADER LIGHT */
+/* HEADER – LIGHT */
 body.light .topbar{
   background:var(--light-card);
   border-bottom:1px solid rgba(0,0,0,0.05);
@@ -38,10 +38,10 @@ body.light .topbar{
   color:var(--light-text);
 }
 
-/* DARK THEME */
+/* THEME DARK */
 body.dark{background:var(--dark-bg);color:var(--dark-text)}
 
-/* HEADER DARK (BLUE) */
+/* HEADER – DARK BLUE */
 body.dark .topbar{
   background:#0d2b4d !important;
   color:var(--dark-text) !important;
@@ -54,13 +54,14 @@ body.dark .topbar{
 
 /* ROUND LOGO */
 .logo{
-  width:60px;
-  height:60px;
+  width:60px;height:60px;
   border-radius:50%;
   object-fit:cover;
 }
 
+/* BRAND TEXT */
 .brand{display:flex;gap:12px;align-items:center}
+.brand div{display:flex;flex-direction:column}
 
 /* TABS */
 .tabs{display:flex;gap:10px;margin:10px 0}
@@ -83,7 +84,7 @@ body.dark .tab{
 }
 body.dark .tab.active{background:var(--accent);color:white}
 
-/* SEARCH */
+/* SEARCH/Input */
 .controls-row{display:flex;gap:8px;margin-bottom:10px}
 .controls-row input{
   flex:1;
@@ -92,26 +93,21 @@ body.dark .tab.active{background:var(--accent);color:white}
   border:1px solid rgba(0,0,0,0.05);
 }
 
-body.dark input{
+body.dark .controls-row input{
   background:#123049;
   border:1px solid var(--dark-border);
   color:var(--dark-text);
 }
 
-/* CARD LIST */
-.list{
-  list-style:none;
-  margin:0;
-  padding:0;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
+/* LEAD / PROJECT CARDS */
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
 
-/* CARD */
 .item{
   padding:14px;
   border-radius:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
   background:var(--light-card);
   border:1px solid rgba(0,0,0,0.04);
   box-shadow:0 5px 16px rgba(0,0,0,0.05);
@@ -120,19 +116,16 @@ body.dark input{
 body.dark .item{
   background:var(--dark-card);
   border:1px solid var(--dark-border);
-  box-shadow:none;
   color:var(--dark-text);
+  box-shadow:none;
 }
 
-/* CARD TEXT */
+/* META TEXT */
 .meta{
   font-size:13px;
   opacity:0.75;
 }
-body.dark .meta{
-  color:var(--dark-text);
-  opacity:0.85;
-}
+body.dark .meta{color:var(--dark-text);opacity:0.8}
 
 /* BUTTONS */
 .btn{
@@ -140,23 +133,21 @@ body.dark .meta{
   border-radius:8px;
   cursor:pointer;
   font-size:14px;
+  border:1px solid rgba(0,0,0,0.05);
 }
 
-.btn.small{
-  padding:6px 9px;
-  font-size:13px;
-}
+.btn.small{padding:6px 9px;font-size:13px}
 
 .btn.primary{
   background:var(--accent);
-  color:white;
   border:none;
+  color:white;
 }
 
 .btn.danger{
   background:var(--danger);
-  color:white;
   border:none;
+  color:white;
 }
 
 .btn.whatsapp{
@@ -165,11 +156,11 @@ body.dark .meta{
   border:none;
 }
 
-/* DARK MODE BUTTONS */
+/* DARK BUTTON HANDLING */
 body.dark .btn{
   background:#123049;
-  color:var(--dark-text);
   border:1px solid var(--dark-border);
+  color:var(--dark-text);
 }
 body.dark .btn.primary{background:var(--accent);color:white}
 body.dark .btn.danger{background:var(--danger);color:white}
@@ -189,16 +180,20 @@ body.dark .modal-card{
 
 /* PROJECT IMAGE PREVIEW */
 .images-preview img{
-  width:90px;height:90px;border-radius:10px;
-  object-fit:cover;border:1px solid rgba(0,0,0,0.06);
+  width:90px;height:90px;border-radius:10px;object-fit:cover;
+  border:1px solid rgba(0,0,0,0.06);
 }
-body.dark .images-preview img{
-  border:1px solid var(--dark-border);
-}
+body.dark .images-preview img{border:1px solid var(--dark-border)}
 
-/* SECTION TITLES */
+/* SECTIONS */
 .section-title{
   font-size:17px;
   margin:20px 0 10px;
   font-weight:600;
 }
+
+/* FIX: keep sections separated */
+#leads.view{}
+#projects.view{}
+#today.view{}
+#settings.view{}
