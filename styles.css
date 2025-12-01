@@ -1,0 +1,1 @@
+body{font-family:sans-serif;margin:0;padding:10px;} .switch{width:50px;height:24px;background:#ccc;border-radius:20px;position:relative;cursor:pointer} .knob{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;} body.dark{background:#111;color:#fff}
