@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vamika Estate CRM</title>
+  <meta name="description" content="Vamika Estate CRM - dashboard" />
+  <meta name="theme-color" id="meta-theme-color" content="#0b5cff" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="favicon.ico" />
+
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #6b7280;
+      --accent: #0b5cff;
+      --toast-bg: rgba(10,15,30,0.9);
+    }
+    [data-theme="dark"] {
+      --bg: #0b1220;
+      --card: #071022;
+      --text: #e6eef8;
+      --muted: #9aa6b4;
+      --accent: #62a0ff;
+      --toast-bg: rgba(230,238,248,0.06);
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:980px;margin:28px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#3b82f6);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(10,15,30,0.06);margin-top:18px}
+    .muted{color:var(--muted);font-size:0.95rem}
+    .btn{display:inline-block;padding:10px 14px;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+    .controls{display:flex;gap:8px;align-items:center}
+    .toggle{cursor:pointer;padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;color:var(--text)}
+    pre{background:#0b1220;color:#dbeafe;padding:12px;border-radius:8px;overflow:auto}
+    /* small responsive */
+    @media (max-width:520px){
+      .wrap{margin:12px;padding:12px}
+      .logo{width:46px;height:46px}
+    }
+  </style>
+
+  <!-- OneSignal SDK -->
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+
+  <script>
+    // Dark mode setup - respects system preference and user's toggle (saved in localStorage)
+    (function(){
+      const metaTheme = document.getElementById('meta-theme-color');
+
+      function applyTheme(theme){
+        if(theme === 'dark') {
+          document.documentElement.setAttribute('data-theme','dark');
+          metaTheme.setAttribute('content','#071022');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+          metaTheme.setAttribute('content','#0b5cff');
+        }
+      }
+
+      // Determine initial theme: localStorage -> prefers-color-scheme -> light
+      const saved = localStorage.getItem('vamika-theme');
+      if(saved) {
+        applyTheme(saved);
+      } else {
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(prefersDark ? 'dark' : 'light');
+      }
+
+      // Expose toggle function for UI button
+      window.vamikaThemeToggle = function(){
+        const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('vamika-theme', next);
+      };
+    })();
+  </script>
+
+  <script>
+    // OneSignal initialization with your App ID
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "1c10531a-80ef-4cad-9a56-89dc3564bc7c",
+        notifyButton: { enable: true },
+        allowLocalhostAsSecureOrigin: true
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">V</div>
+        <div>
+          <h1 style="margin:0">Vamika Estate CRM</h1>
+          <div class="muted">Ready-to-upload — includes OneSignal & Dark Mode</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="toggle" id="darkToggle" aria-label="Toggle dark mode" onclick="window.vamikaThemeToggle();">
+          Toggle Dark
+        </button>
+        <a class="btn" href="#dashboard">Open Dashboard</a>
+      </div>
+    </header>
+
+    <div class="card">
+      <h2 style="margin-top:0">Push Notifications</h2>
+      <p class="muted">OneSignal is initialized with your App ID. Click the bell (notify widget) to enable push notifications for visitors.</p>
+      <p class="muted">If push isn't working on GitHub Pages, ensure your repository is served over HTTPS and the files below are uploaded to the repo root:</p>
+      <ul>
+        <li>index.html</li>
+        <li>manifest.json</li>
+        <li>OneSignalSDKWorker.js</li>
+        <li>OneSignalSDKUpdaterWorker.js</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Preview</h2>
+      <p class="muted">This app supports system dark mode and a manual toggle which is remembered across visits.</p>
+    </div>
+
+    <footer style="margin-top:18px;text-align:center" class="muted">
+      Vamika Estate CRM • Prepared for Hiren Gohel
+    </footer>
+  </div>
+
+  <script>
+    // Small toast helper used by OneSignal check (non-intrusive)
+    function showMsg(t){
+      const d = document.createElement('div');
+      d.textContent = t;
+      d.style.position='fixed';
+      d.style.right='18px';
+      d.style.bottom='18px';
+      d.style.background='var(--toast-bg)';
+      d.style.color='var(--text)';
+      d.style.padding='10px 14px';
+      d.style.borderRadius='8px';
+      d.style.boxShadow='0 6px 18px rgba(10,15,30,0.12)';
+      document.body.appendChild(d);
+      setTimeout(()=>d.remove(),4000);
+    }
+
+    // If OneSignal exists, show hint about push status
+    if (window.OneSignal) {
+      OneSignal.push(function(){
+        OneSignal.isPushNotificationsEnabled().then(function(isEnabled){
+          showMsg(isEnabled ? 'Push is enabled' : 'Push not enabled (click bell)');
+        }).catch(()=>{});
+      });
+    }
+  </script>
+</body>
+</html>
