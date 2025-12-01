@@ -1,0 +1,13 @@
+{
+  "name": "Vamika Estate CRM",
+  "short_name": "VamikaCRM",
+  "start_url": ".",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
