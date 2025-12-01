@@ -1,0 +1,132 @@
+/* Vamika Estate CSS - corrected
+   - preserves view hiding (.hidden)
+   - header dark/light
+   - lead card styling
+   - whatsapp button green, delete red
+   - round logo
+*/
+
+:root{
+  --accent:#1976d2;
+  --danger:#d9534f;
+  --whatsapp:#25D366;
+  --light-bg:#f4f9ff;
+  --light-card:#ffffff;
+  --light-text:#122;
+
+  --dark-bg:#07131f;
+  --dark-card:#0d1f2c;
+  --dark-text:#eaf5ff;
+  --dark-border:rgba(255,255,255,0.1);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Inter,system-ui,Arial}
+
+/* Keep views hidden when not active */
+.hidden{display:none}
+.view{padding:12px}
+
+/* LIGHT THEME */
+body.light{
+  background:var(--light-bg);
+  color:var(--light-text);
+}
+
+/* Header light */
+body.light .topbar{
+  background:var(--light-card);
+  color:var(--light-text);
+  border-bottom:1px solid rgba(0,0,0,0.05);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 14px;
+}
+
+/* DARK THEME */
+body.dark{
+  background:var(--dark-bg);
+  color:var(--dark-text);
+}
+
+/* Header dark: dark blue */
+body.dark .topbar{
+  background:#0d2b4d !important;
+  color:var(--dark-text) !important;
+  border-bottom:1px solid var(--dark-border);
+}
+
+/* Brand / logo */
+.brand{display:flex;gap:12px;align-items:center}
+.logo{
+  width:56px;
+  height:56px;
+  object-fit:cover;
+  border-radius:50%;
+  border:1px solid rgba(0,0,0,0.06);
+}
+
+/* Tabs */
+.tabs{display:flex;gap:8px;margin:12px 0}
+.tab{padding:10px 12px;border-radius:10px;cursor:pointer;border:1px solid rgba(0,0,0,0.06)}
+body.light .tab{background:#fff;color:var(--light-text)}
+body.light .tab.active{background:var(--accent);color:#fff}
+body.dark .tab{background:#102a3a;color:var(--dark-text);border:1px solid var(--dark-border)}
+body.dark .tab.active{background:var(--accent);color:#fff}
+
+/* Controls */
+.controls-row{display:flex;gap:8px;margin-bottom:10px;align-items:center}
+.controls-row input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.06)}
+body.dark .controls-row input{background:#15354a;border:1px solid var(--dark-border);color:var(--dark-text)}
+
+/* Item / card */
+.list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  border-radius:12px;
+  background:var(--light-card);
+  box-shadow:0 6px 18px rgba(10,20,30,0.04);
+  border:1px solid rgba(0,0,0,0.04);
+}
+body.dark .item{
+  background:var(--dark-card);
+  color:var(--dark-text);
+  border:1px solid var(--dark-border);
+  box-shadow:none;
+}
+
+/* Meta text */
+.meta{color:rgba(0,0,0,0.6);font-size:13px}
+body.dark .meta{color:rgba(234,245,255,0.9);opacity:0.9}
+
+/* Buttons */
+.btn{padding:8px 12px;border-radius:8px;cursor:pointer;border:1px solid rgba(0,0,0,0.06);background:#fff}
+.btn.small{padding:6px 8px;font-size:13px}
+.btn.primary{background:var(--accent);color:#fff;border:none}
+.btn.danger{background:var(--danger);color:#fff;border:none}
+.btn.whatsapp{background:var(--whatsapp);color:#fff;border:none}
+
+/* Dark mode buttons */
+body.dark .btn{background:#15354a;border:1px solid var(--dark-border);color:var(--dark-text)}
+body.dark .btn.primary{background:var(--accent);color:#fff}
+body.dark .btn.whatsapp{background:var(--whatsapp);color:#fff}
+
+/* Modal card */
+.modal-card{background:var(--light-card);border-radius:12px;padding:14px}
+body.dark .modal-card{background:var(--dark-card);border:1px solid var(--dark-border);color:var(--dark-text)}
+
+/* Images preview */
+.images-preview img{width:90px;height:90px;border-radius:10px;object-fit:cover;border:1px solid rgba(0,0,0,0.06)}
+body.dark .images-preview img{border:1px solid var(--dark-border)}
+
+/* Footer */
+footer{padding:12px;text-align:center;color:rgba(0,0,0,0.6)}
+body.dark footer{color:rgba(234,245,255,0.7)}
+
+/* Misc tweaks to keep content in right sections */
+.container{max-width:980px;margin:12px auto;padding:0 14px}
+.view > .list, .view > ul { margin-top:8px; }
