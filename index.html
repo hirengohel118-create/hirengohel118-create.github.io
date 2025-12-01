@@ -1,0 +1,96 @@
+
+<!doctype html>
+<html>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Vamika Estate CRM</title><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css"></head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="logo"><img id="logoImg" src="logo-round.png" style="width:100%;height:100%;object-fit:cover"></div>
+      <div class="titlewrap"><div class="title" id="brandTitle">Vamika Estate CRM</div><div class="subtitle" id="brandSub">Hiren Gohel • 7046869462</div></div>
+      <div class="controls"><button class="notify-btn" onclick="alert('Notifications require OneSignal setup. I can add it if you give App ID')">Enable Notifications</button></div>
+    </div>
+
+    <div class="tabbar">
+      <div class="tab active" id="tab-leads" onclick="showTab('leads')">Leads <span class="small">(<span id="leadCount">0</span>)</span></div>
+      <div class="tab" id="tab-projects" onclick="showTab('projects')">Projects <span class="small">(<span id="projectCount">0</span>)</span></div>
+      <div class="tab" id="tab-followups" onclick="showTab('followups')">Today Follow-ups</div>
+      <div class="tab" id="tab-settings" onclick="showTab('settings')">Settings</div>
+    </div>
+
+    <div class="container">
+      <!-- Leads Page -->
+      <div id="page-leads" class="page">
+        <div class="search-row">
+          <input id="searchInput" class="search" placeholder="Search leads...">
+          <button class="add-btn" onclick="document.getElementById('leadForm').scrollIntoView({behavior:'smooth'})">+ New Lead</button>
+        </div>
+
+        <div id="leadForm" class="card-small" style="margin-top:12px">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <input id="input_name" class="input" placeholder="Name" style="flex:1;min-width:180px">
+            <input id="input_phone" class="input" placeholder="Phone" style="width:200px">
+            <input id="input_req" class="input" placeholder="Requirement" style="width:160px">
+            <input id="input_loc" class="input" placeholder="Location" style="width:160px">
+            <input id="input_budget" class="input" placeholder="Budget" style="width:160px">
+            <input id="input_follow" class="input" type="datetime-local" style="width:220px">
+            <textarea id="input_notes" class="input" placeholder="Notes" style="flex-basis:100%"></textarea>
+            <button class="btn" id="saveLeadBtn" style="width:200px">Save Lead</button>
+          </div>
+        </div>
+
+        <div id="leadsList"></div>
+      </div>
+
+      <!-- Projects Page -->
+      <div id="page-projects" class="page hidden">
+        <div class="card-small">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <input id="proj_title" class="input" placeholder="Project title" style="flex:1;min-width:180px">
+            <input id="proj_loc" class="input" placeholder="Location" style="width:200px">
+            <select id="proj_config" class="input" style="width:160px"><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option><option>5 BHK</option><option>6 BHK</option></select>
+            <input id="proj_size" class="input" placeholder="Size" style="width:120px">
+            <input id="proj_price" class="input" placeholder="Price" style="width:160px">
+            <input id="proj_img" class="input" type="file" accept="image/*" style="width:220px">
+            <textarea id="proj_desc" class="input" placeholder="Short description" style="flex-basis:100%"></textarea>
+            <button class="btn" id="saveProjectBtn" style="width:200px">Save Project</button>
+          </div>
+        </div>
+
+        <div id="projectsList"></div>
+      </div>
+
+      <!-- Follow-ups Page -->
+      <div id="page-followups" class="page hidden">
+        <div id="followupsList"></div>
+      </div>
+
+      <!-- Settings Page -->
+      <div id="page-settings" class="page hidden">
+        <div class="card-small">
+          <h3>Settings & Profile</h3>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:240px">
+              <div class="small">Business name</div><input id="prof_business" class="input" placeholder="Vamika Estate">
+              <div class="small">Owner</div><input id="prof_owner" class="input" placeholder="Hiren Gohel">
+              <div class="small">Phone</div><input id="prof_phone" class="input" placeholder="7046869462">
+              <div class="small">Email</div><input id="prof_email" class="input" placeholder="">
+              <div class="small">Address</div><input id="prof_address" class="input" placeholder="">
+              <button class="btn" id="saveProfileBtn" style="margin-top:8px">Save Profile</button>
+            </div>
+            <div style="width:320px">
+              <div class="small">Theme accent (HEX)</div><input id="accentInput" class="input" placeholder="#3B82F6">
+              <div class="small" style="margin-top:8px">Upload logo</div><input id="logoUpload" class="input" type="file" accept="image/*">
+              <div style="margin-top:8px"><button class="btn" id="exportBtn">Export Backup</button><input id="importBackup" type="file" accept="application/json" class="input" style="margin-top:8px"></div>
+              <div style="margin-top:12px"><div class="small">Total leads</div><div class="counter" id="leadCount">0</div><div class="small" style="margin-top:8px">Total projects</div><div class="counter" id="projectCount">0</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">Made for Vamika Estate • Add to Home Screen for app-like experience</div>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
