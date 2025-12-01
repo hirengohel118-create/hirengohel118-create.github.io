@@ -8,7 +8,18 @@
   <link rel="stylesheet" href="styles.css" />
   <meta name="theme-color" content="#1976d2" />
 </head>
-<body class="light">
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+<script>
+  window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "1c10531a-80ef-4cad-9a56-89dc3564bc7c",
+      notifyButton: { enable: false },
+      welcomeNotification: { show: false }
+    });
+  });
+</script>
+  <body class="light">
   <header class="topbar">
     <div class="brand">
       <img src="logo.png" alt="Vamika Estate" class="logo"/>
