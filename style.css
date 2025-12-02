@@ -1,9 +1,0 @@
-body.light { background:#fff; color:#000; transition:0.3s;}
-body.dark { background:#121212; color:#fff; transition:0.3s;}
-.tabs { display:flex; gap:10px; padding:10px; }
-.tab-content { display:none; padding:10px;}
-.tab-content.active { display:block;}
-.modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5);}
-.modal-content { background:#fff; padding:20px; margin:50px auto; width:80%;}
-body.dark .modal-content { background:#333;}
-#badge { background:red; color:#fff; padding:2px 6px; border-radius:8px; font-size:12px;}
