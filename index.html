@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vamika Estate CRM - Fixed Tabs</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="header-card">
+      <div class="logo-wrap">
+        <img id="logoImg" src="" alt="V" onerror="this.style.display='none'">
+        <div class="logo-placeholder" id="logoPlaceholder">V</div>
+      </div>
+      <div class="header-info">
+        <div class="biz-name">Vamika<br><span class="estate">Estate</span></div>
+        <div class="owner">Hiren Gohel • <span id="ownerPhone">7046869462</span></div>
+      </div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="leadsTab">Leads</button>
+      <button class="tab" data-tab="projectsTab">Projects</button>
+      <button class="tab" data-tab="followupsTab">Follow-ups <span id="badge" class="badge"></span></button>
+      <button class="tab" data-tab="settingsTab">Settings</button>
+    </nav>
+
+    <main class="content">
+      <section id="leadsTab" class="tab-content active">
+        <div class="row top-row">
+          <input id="searchLeads" placeholder="Search leads..." />
+          <button class="primary" id="addLeadBtn">+ New Lead</button>
+        </div>
+        <div id="leadList" class="card-list"></div>
+        <div class="empty-note" id="leadsEmpty">No leads yet</div>
+      </section>
+
+      <section id="projectsTab" class="tab-content">
+        <div class="row top-row">
+          <button id="addProjectBtn" class="primary">+ New Project</button>
+        </div>
+        <div id="projectList" class="card-list"></div>
+        <div class="empty-note" id="projectsEmpty">No projects yet</div>
+      </section>
+
+      <section id="followupsTab" class="tab-content">
+        <h3>Today's & Overdue Follow-ups</h3>
+        <div id="followList" class="card-list"></div>
+        <div class="empty-note" id="followEmpty">No follow-ups for today</div>
+      </section>
+
+      <section id="settingsTab" class="tab-content">
+        <h3>Settings & Profile</h3>
+        <div class="settings-grid">
+          <label>Business name
+            <input id="bizName" placeholder="Vamika Estate">
+          </label>
+          <label>Owner
+            <input id="ownerName" placeholder="Hiren Gohel">
+          </label>
+          <label>Phone
+            <input id="ownerPhoneInput" placeholder="7046869462">
+          </label>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+
+  <!-- Inline tab-fix script: if original tab-switching failing, this will enforce correct behavior -->
+  <script>
+    (function(){
+      function initTabs(){
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.tab-content');
+        if(!tabs.length || !contents.length) return;
+        tabs.forEach(t => {
+          t.addEventListener('click', ()=>{
+            tabs.forEach(x=>x.classList.remove('active'));
+            t.classList.add('active');
+            const target = t.getAttribute('data-tab');
+            contents.forEach(c=>c.classList.remove('active'));
+            const el = document.getElementById(target);
+            if(el) el.classList.add('active');
+            window.scrollTo({top:0,behavior:'smooth'});
+          });
+        });
+      }
+      // run after DOM loaded and also after app.js may have run
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTabs);
+      } else {
+        initTabs();
+      }
+      // safety: re-init after 500ms in case original scripts modify DOM
+      setTimeout(initTabs, 500);
+    })();
+  </script>
+</body>
+</html>
