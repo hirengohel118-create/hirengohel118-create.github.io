@@ -1,0 +1,27 @@
+
+:root{
+  --bg:#ffffff; --card:#f8fafc; --text:#0f172a; --accent:#3B82F6;
+}
+[data-theme="dark"]{ --bg:#0b1220; --card:#071227; --text:#e6eef8; --accent:#60a5fa; }
+*{box-sizing:border-box;font-family:system-ui,Segoe UI,Roboto,Arial;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.header{display:flex;align-items:center;gap:12px;padding:12px}
+.logo{width:56px;height:56px;border-radius:10px}
+.brand .title{font-weight:700}
+.tabbar{display:flex;gap:6px;padding:8px;overflow:auto}
+.tab{padding:8px 10px;border-radius:18px;border:none;background:transparent;cursor:pointer}
+.tab.active{background:var(--accent);color:#fff}
+.container{flex:1;padding:10px}
+.card{background:var(--card);padding:10px;border-radius:8px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px}
+.input, input, textarea, select{padding:8px;border-radius:6px;border:1px solid #ddd;width:100%}
+.btn{background:var(--accent);color:#fff;padding:10px;border:none;border-radius:6px;cursor:pointer}
+.lead{margin-bottom:8px;padding:8px;border-radius:6px;background:linear-gradient(90deg,rgba(0,0,0,0.03),transparent)}
+.footer{padding:8px;text-align:center;font-size:13px;color:var(--text);opacity:0.7}
+
+/* theme toggle switch */
+.switch{position:relative;display:inline-block;width:44px;height:26px}
+.switch input{display:none}
+.slider{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:26px;transition:0.2s}
+.slider:before{content:'';position:absolute;width:20px;height:20px;background:white;border-radius:50%;left:3px;top:3px;transition:0.2s}
+input:checked + .slider{background:var(--accent)}
+input:checked + .slider:before{transform:translateX(18px)}
