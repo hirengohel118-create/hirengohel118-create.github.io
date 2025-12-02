@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vamika Estate CRM</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#071127">
+  <link rel="apple-touch-icon" href="logo-512.png">
+</head>
+<body>
+  <div id="app">
+    <header class="header-card">
+      <div class="logo-wrap">
+        <img id="logoImg" src="logo-192.png" alt="V" onerror="this.style.display='none'">
+        <div class="logo-placeholder" id="logoPlaceholder">V</div>
+      </div>
+      <div class="header-info">
+        <div class="biz-name">Vamika<br><span class="estate">Estate</span></div>
+        <div class="owner">Hiren Gohel • <span id="ownerPhone">7046869462</span></div>
+      </div>
+      <div class="header-action">
+        <button id="installBtn" class="icon-btn" title="Install app">⬇️</button>
+      </div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="leadsTab">Leads</button>
+      <button class="tab" data-tab="projectsTab">Projects</button>
+      <button class="tab" data-tab="followupsTab">Follow-ups <span id="badge" class="badge"></span></button>
+      <button class="tab" data-tab="settingsTab">Settings</button>
+    </nav>
+
+    <main class="content">
+      <section id="leadsTab" class="tab-content active">
+        <div class="row top-row">
+          <input id="searchLeads" placeholder="Search leads..." />
+          <button class="primary" id="addLeadBtn">+ New Lead</button>
+        </div>
+        <div id="leadList" class="card-list"></div>
+        <div class="empty-note" id="leadsEmpty">No leads yet</div>
+      </section>
+
+      <section id="projectsTab" class="tab-content">
+        <div class="row top-row">
+          <button id="addProjectBtn" class="primary">+ New Project</button>
+        </div>
+        <div id="projectList" class="card-list"></div>
+        <div class="empty-note" id="projectsEmpty">No projects yet</div>
+      </section>
+
+      <section id="followupsTab" class="tab-content">
+        <h3>Today's & Overdue Follow-ups</h3>
+        <div id="followList" class="card-list"></div>
+        <div class="empty-note" id="followEmpty">No follow-ups for today</div>
+      </section>
+
+      <section id="settingsTab" class="tab-content">
+        <h3>Settings & Profile</h3>
+        <div class="settings-grid">
+          <label>Business name
+            <input id="bizName" placeholder="Vamika Estate">
+          </label>
+          <label>Owner
+            <input id="ownerName" placeholder="Hiren Gohel">
+          </label>
+          <label>Phone
+            <input id="ownerPhoneInput" placeholder="7046869462">
+          </label>
+          <label>Theme accent (HEX)
+            <input id="accentColor" placeholder="#3B82F6">
+          </label>
+          <label>Logo (PNG/JPG)
+            <input id="uploadLogo" type="file" accept="image/*">
+          </label>
+
+          <div class="actions-row">
+            <button id="saveProfile">Save Profile</button>
+          </div>
+
+          <label>Appearance
+            <div class="switch-row icon-toggle">
+              <button id="iconLight" class="icon-mode" title="Light mode">☀️</button>
+              <button id="iconDark" class="icon-mode active" title="Dark mode">🌙</button>
+            </div>
+          </label>
+
+          <label>Export / Backup</label>
+          <div class="export-row">
+            <button id="exportCSV">Export Leads (CSV)</button>
+            <button id="exportExcel">Export Leads (Excel)</button>
+          </div>
+
+          <label>Backup / Restore JSON</label>
+          <div class="export-row">
+            <button id="downloadBackup">Download JSON Backup</button>
+            <input id="restoreFile" type="file" accept="application/json">
+          </div>
+
+          <div class="stats">
+            <div>Total leads <div id="totalLeads">0</div></div>
+            <div>Total projects <div id="totalProjects">0</div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- LEAD FORM -->
+  <div id="leadForm" class="modal">
+    <div class="modal-card">
+      <h3 id="formTitle">Add Lead</h3>
+      <div class="form-row">
+        <input id="name" placeholder="Name *">
+        <input id="phone" placeholder="Phone Number *">
+      </div>
+      <div class="form-row">
+        <select id="ptype"><option>Residential</option><option>Commercial</option></select>
+        <select id="config"><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option><option>5 BHK</option><option>6 BHK</option></select>
+      </div>
+      <div class="form-row">
+        <input id="location" placeholder="Location">
+        <input id="budget" placeholder="Budget">
+      </div>
+      <div class="form-row">
+        <select id="status"><option>New Lead</option><option>Contacted</option><option>Call Not Received</option><option>Interested</option><option>Not Interested</option><option>Closed</option></select>
+        <input id="fdate" type="datetime-local" placeholder="Follow-up date & time">
+      </div>
+      <textarea id="notes" placeholder="Notes"></textarea>
+      <div class="form-actions">
+        <button id="saveLead" class="primary">Save Lead</button>
+        <button id="cancelLead">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- project form -->
+  <div id="projectForm" class="modal">
+    <div class="modal-card">
+      <h3>Add Project</h3>
+      <input id="projectName" placeholder="Project Name">
+      <input id="projectLocation" placeholder="Location">
+      <select id="projectConfig"><option>1 BHK</option><option>2 BHK</option></select>
+      <input id="projectSize" placeholder="Size">
+      <input id="projectPrice" placeholder="Price">
+      <textarea id="projectDesc" placeholder="Description"></textarea>
+      <div class="form-actions">
+        <button id="saveProject" class="primary">Save Project</button>
+        <button id="cancelProject">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Install prompt handling
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBtn').style.display = 'inline-block';
+    });
+    document.getElementById('installBtn').addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('installBtn').style.display = 'none';
+    });
+    if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }
+  </script>
+</body>
+</html>
