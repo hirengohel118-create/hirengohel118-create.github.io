@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vamika Estate CRM</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.theme-dark {
+      --bg: #020617;
+      --card-bg: #020617;
+      --card-elevated: #0f172a;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-soft: rgba(59, 130, 246, 0.15);
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --danger: #f97373;
+    }
+
+    body.theme-light {
+      --bg: #f9fafb;
+      --card-bg: #ffffff;
+      --card-elevated: #ffffff;
+      --text: #0f172a;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-soft: rgba(37, 99, 235, 0.12);
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --danger: #dc2626;
+    }
+
+    /* TOP BAR + SIDEBAR */
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px 0 8px;
+      z-index: 40;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.8);
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-bar-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .hamburger-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.9);
+      cursor: pointer;
+    }
+
+    .hamburger-icon {
+      width: 16px;
+      height: 12px;
+      position: relative;
+    }
+
+    .hamburger-icon span {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: #e5e7eb;
+    }
+
+    .hamburger-icon span:nth-child(1) { top: 0; }
+    .hamburger-icon span:nth-child(2) { top: 5px; }
+    .hamburger-icon span:nth-child(3) { top: 10px; }
+
+    .install-btn {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: transparent;
+      color: #e5e7eb;
+      font-size: 12px;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .install-btn span {
+      font-size: 14px;
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 39;
+    }
+
+    .sidebar-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 70%;
+      max-width: 320px;
+      background: rgba(15, 23, 42, 0.98);
+      border-right: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 0 35px rgba(0, 0, 0, 0.8);
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+      z-index: 40;
+      padding: 14px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    body.theme-light .sidebar {
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #60a5fa, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 24px;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.6);
+    }
+
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .sidebar-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .sidebar-menu {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-item {
+      border-radius: 999px;
+      padding: 9px 11px;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .sidebar-item span.icon {
+      font-size: 15px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-item.active {
+      background: linear-gradient(145deg, var(--primary), #0ea5e9);
+      color: white;
+      box-shadow: 0 10px 26px rgba(37, 99, 235, 0.65);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* APP SHELL */
+
+    .app-shell {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 72px 16px 40px; /* top padding for top-bar */
+    }
+
+    .header-card {
+      background: radial-gradient(circle at top left, var(--primary-soft), transparent),
+                  var(--card-elevated);
+      border-radius: 20px;
+      padding: 16px 16px 14px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .logo-pill {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #60a5fa, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 30px;
+      font-weight: 800;
+      box-shadow: 0 16px 35px rgba(37, 99, 235, 0.6);
+      flex-shrink: 0;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-name-main {
+      font-size: 20px;
+      font-weight: 750;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-name-sub {
+      font-size: 20px;
+      font-weight: 650;
+      color: var(--muted);
+    }
+
+    .owner-line {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .owner-line span.dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--muted);
+    }
+
+    /* Tab row hidden (we use sidebar now) */
+    .tabs-row {
+      display: none;
+    }
+
+    .content-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      border: 1px solid var(--border-subtle);
+      padding: 14px 14px 18px;
+      margin-top: 8px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.7);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .section-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .pill {
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .primary-btn, .ghost-btn {
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .primary-btn {
+      background: linear-gradient(145deg, var(--primary), #0ea5e9);
+      color: white;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.7);
+    }
+
+    .ghost-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      margin-top: 4px;
+    }
+
+    .search-input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      padding: 7px 11px;
+      font-size: 13px;
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text);
+    }
+
+    body.theme-light .search-input {
+      background: #ffffff;
+    }
+
+    .search-input::placeholder {
+      color: var(--muted);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.7);
+      color: var(--muted);
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      margin-bottom: 10px;
+    }
+
+    body.theme-light .chip {
+      background: rgba(243, 244, 246, 0.95);
+    }
+
+    .empty-state {
+      border-radius: 16px;
+      padding: 16px 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      text-align: left;
+      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.22), transparent),
+                  rgba(15, 23, 42, 0.6);
+      margin-top: 4px;
+    }
+
+    body.theme-light .empty-state {
+      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent),
+                  #ffffff;
+    }
+
+    .empty-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .empty-text {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .leads-list,
+    .projects-list,
+    .followup-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .item-card {
+      border-radius: 14px;
+      padding: 9px 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: pointer;
+    }
+
+    body.theme-light .item-card {
+      background: #ffffff;
+    }
+
+    .item-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .item-title {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .status-pill {
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      background: rgba(34, 197, 94, 0.14);
+      color: #4ade80;
+    }
+
+    .status-pill.overdue {
+      background: rgba(248, 113, 113, 0.16);
+      color: #fca5a5;
+    }
+
+    .item-line {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .item-line.full {
+      justify-content: flex-start;
+    }
+
+    .item-line.full span {
+      margin-right: 8px;
+    }
+
+    .item-actions {
+      margin-top: 4px;
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: transparent;
+      font-size: 10px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 12px 0 6px;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .settings-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 12px;
+    }
+
+    .field-label {
+      color: var(--muted);
+    }
+
+    .field-input,
+    .field-select {
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 6px 9px;
+      font-size: 13px;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+    }
+
+    body.theme-light .field-input,
+    body.theme-light .field-select {
+      background: #ffffff;
+    }
+
+    .field-input::placeholder {
+      color: var(--muted);
+    }
+
+    .theme-toggle-row {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 3px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.8);
+      gap: 3px;
+      margin-top: 4px;
+    }
+
+    body.theme-light .theme-toggle-row {
+      background: rgba(243, 244, 246, 0.95);
+    }
+
+    .theme-btn {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .theme-btn.active {
+      background: #facc15;
+      color: #0f172a;
+      box-shadow: 0 10px 22px rgba(250, 204, 21, 0.45);
+    }
+
+    .theme-btn.dark-active {
+      background: #0f172a;
+      color: #e5e7eb;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.7);
+    }
+
+    .export-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .stat-pill {
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 10px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Modal styles */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.75);
+      z-index: 50;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-panel {
+      width: 92%;
+      max-width: 420px;
+      background: var(--card-elevated);
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.75);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+      padding: 14px 14px 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    body.theme-light .modal-panel {
+      background: #ffffff;
+    }
+
+    .modal-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .danger-text {
+      color: var(--danger);
+    }
+
+    .history-list {
+      margin-top: 6px;
+      border-left: 2px solid rgba(148, 163, 184, 0.6);
+      padding-left: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .history-item {
+      position: relative;
+    }
+
+    .history-item::before {
+      content: '';
+      position: absolute;
+      left: -11px;
+      top: 4px;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    .history-date {
+      font-weight: 500;
+      margin-right: 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top bar and sidebar -->
+  <div class="top-bar">
+    <div class="top-left">
+      <button id="menuToggle" class="hamburger-btn" aria-label="Open menu">
+        <div class="hamburger-icon">
+          <span></span><span></span><span></span>
+        </div>
+      </button>
+      <div class="top-bar-title">Vamika Estate</div>
+    </div>
+    <button id="installBtn" class="install-btn">
+      <span>⬇</span>
+      <span>Install</span>
+    </button>
+  </div>
+
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <nav id="sidebar" class="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">V</div>
+      <div>
+        <div class="sidebar-title">Vamika Estate</div>
+        <div class="sidebar-subtitle">Hiren Gohel · <span id="sidebarPhone">7046869462</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu">
+      <button class="sidebar-item active" data-section="leads">
+        <span class="icon">👤</span>
+        <span>Leads</span>
+      </button>
+      <button class="sidebar-item" data-section="projects">
+        <span class="icon">🏢</span>
+        <span>Projects</span>
+      </button>
+      <button class="sidebar-item" data-section="followups">
+        <span class="icon">⏱️</span>
+        <span>Follow-ups</span>
+      </button>
+      <button class="sidebar-item" data-section="settings">
+        <span class="icon">⚙️</span>
+        <span>Settings</span>
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      All data stays on this device. Take a JSON backup before changing phone.
+    </div>
+  </nav>
+
+  <div class="app-shell">
+    <header class="header-card">
+      <div class="logo-pill">V</div>
+      <div class="brand-text">
+        <div>
+          <span class="brand-name-main">Vamika</span>
+          <span class="brand-name-sub">Estate</span>
+        </div>
+        <div class="owner-line">
+          <span id="headerOwner">Hiren Gohel</span>
+          <span class="dot"></span>
+          <span id="headerPhone">7046869462</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-card">
+      <!-- Leads TAB -->
+      <section id="tab-leads" class="tab-content active">
+        <div class="section-header-row">
+          <div class="section-title">Leads</div>
+          <button class="primary-btn" id="btnNewLead">
+            + New Lead
+          </button>
+        </div>
+
+        <div class="search-row">
+          <input id="leadSearch" class="search-input" placeholder="Search leads by name, phone, location..." />
+        </div>
+
+        <div class="chip">
+          🔁 Today's & overdue follow-ups will also show on “Follow-ups” tab
+        </div>
+
+        <div id="emptyLeads" class="empty-state">
+          <div class="empty-title">No leads yet</div>
+          <div class="empty-text">
+            Start by adding your first lead. You can track requirements, budget, follow-up dates & notes in one place.
+          </div>
+          <button class="primary-btn" id="btnEmptyNewLead">+ Add first lead</button>
+        </div>
+
+        <div id="leadsList" class="leads-list"></div>
+      </section>
+
+      <!-- Projects TAB -->
+      <section id="tab-projects" class="tab-content">
+        <div class="section-header-row">
+          <div class="section-title">Projects</div>
+          <button class="primary-btn" id="btnNewProject">
+            + New Project
+          </button>
+        </div>
+
+        <div class="search-row">
+          <input id="projectSearch" class="search-input" placeholder="Search projects by name, location..." />
+        </div>
+
+        <div id="emptyProjects" class="empty-state">
+          <div class="empty-title">No projects added</div>
+          <div class="empty-text">
+            Add projects with configuration, location, price range & highlights to quickly share with clients.
+          </div>
+          <button class="primary-btn" id="btnEmptyNewProject">+ Add first project</button>
+        </div>
+
+        <div id="projectsList" class="projects-list"></div>
+      </section>
+
+      <!-- Follow-ups TAB -->
+      <section id="tab-followups" class="tab-content">
+        <div class="section-header-row">
+          <div class="section-title">Follow-ups</div>
+          <span class="pill">Today's & overdue only</span>
+        </div>
+
+        <div id="emptyFollowups" class="empty-state">
+          <div class="empty-title">No follow-ups for now</div>
+          <div class="empty-text">
+            When you set a next follow-up date for any lead, it will automatically appear here when due and stay until completed.
+          </div>
+        </div>
+
+        <div id="followupsList" class="followup-list"></div>
+      </section>
+
+      <!-- Settings TAB -->
+      <section id="tab-settings" class="tab-content">
+        <div class="section-header-row">
+          <div class="section-title">Settings & Profile</div>
+          <span class="pill">Local to this device</span>
+        </div>
+
+        <div class="settings-grid">
+          <div class="field-group">
+            <label class="field-label">Business name</label>
+            <input id="businessName" class="field-input" placeholder="Business name" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Owner</label>
+            <input id="ownerName" class="field-input" placeholder="Owner name" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Phone</label>
+            <input id="ownerPhone" class="field-input" placeholder="Phone number" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Theme accent (HEX)</label>
+            <input id="themeAccent" class="field-input" placeholder="#3B82F6" />
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-top:10px;">
+          <label class="field-label">Logo (PNG/JPG)</label>
+          <input id="logoFile" type="file" accept="image/*" class="field-input" />
+        </div>
+
+        <div style="margin-top: 10px;">
+          <button class="ghost-btn" id="btnSaveProfile">Save Profile</button>
+        </div>
+
+        <div class="section-label">Theme</div>
+        <div class="theme-toggle-row">
+          <button id="btnLight" class="theme-btn">☀️</button>
+          <button id="btnDark" class="theme-btn">🌙</button>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">
+          Choose between light and dark mode. Your preference is saved on this device.
+        </div>
+
+        <div class="section-label">Export & Backup</div>
+        <div class="export-row">
+          <button class="ghost-btn" id="btnExportCsv">Export Leads (CSV)</button>
+          <button class="ghost-btn" id="btnExportExcel">Export Leads (Excel)</button>
+        </div>
+
+        <div class="export-row" style="margin-top:8px;">
+          <button class="ghost-btn" id="btnDownloadJson">Download JSON Backup</button>
+          <label class="ghost-btn" style="cursor:pointer;">
+            <input id="restoreFile" type="file" accept="application/json" style="display:none;" />
+            Restore from JSON
+          </label>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-pill" id="statTotalLeads">Total leads: 0</div>
+          <div class="stat-pill" id="statTotalProjects">Total projects: 0</div>
+        </div>
+
+        <div class="footer-note">
+          All data is stored locally in your browser (this device only). Take a JSON backup before changing devices.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Lead Modal (Add / Edit) -->
+  <div id="leadModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title" id="leadModalTitle">Add Lead</div>
+        <button class="modal-close-btn" data-close-lead>&times;</button>
+      </div>
+
+      <div class="settings-grid">
+        <div class="field-group">
+          <label class="field-label">Name *</label>
+          <input id="leadName" class="field-input" placeholder="Client name" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Phone Number *</label>
+          <input id="leadPhone" class="field-input" placeholder="Phone number" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Segment</label>
+          <select id="leadSegment" class="field-select">
+            <option>Residential</option>
+            <option>Commercial</option>
+            <option>Plot</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Requirement</label>
+          <input id="leadRequirement" class="field-input" placeholder="2 BHK, 3 BHK, etc." />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Location</label>
+          <input id="leadLocation" class="field-input" placeholder="Preferred location" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Budget</label>
+          <input id="leadBudget" class="field-input" placeholder="e.g. 60L–80L" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Next follow-up (date & time)</label>
+          <input id="leadNextFollow" type="datetime-local" class="field-input" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Notes</label>
+          <input id="leadNotes" class="field-input" placeholder="Site visit, call back, etc." />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-lead>Cancel</button>
+        <button class="primary-btn" id="btnSaveLead">Save Lead</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Modal -->
+  <div id="projectModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title">Add Project</div>
+        <button class="modal-close-btn" data-close-project>&times;</button>
+      </div>
+
+      <div class="settings-grid">
+        <div class="field-group">
+          <label class="field-label">Project name *</label>
+          <input id="projectName" class="field-input" placeholder="Project name" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Location</label>
+          <input id="projectLocation" class="field-input" placeholder="Area / road" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Configuration</label>
+          <input id="projectConfig" class="field-input" placeholder="2 & 3 BHK, G+14, etc." />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Price range</label>
+          <input id="projectPrice" class="field-input" placeholder="From 53L all inclusive" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Highlights</label>
+          <input id="projectHighlights" class="field-input" placeholder="Amenities, corner plot, etc." />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-project>Cancel</button>
+        <button class="primary-btn" id="btnSaveProject">Save Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lead Detail Modal (Full view + history) -->
+  <div id="leadDetailModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title">Lead details</div>
+        <button class="modal-close-btn" data-close-detail>&times;</button>
+      </div>
+
+      <div id="leadDetailBody" style="font-size:12px;"></div>
+
+      <div class="section-label" style="margin-top:10px;">Add follow-up note</div>
+      <div class="field-group">
+        <label class="field-label">When</label>
+        <input id="detailFollowWhen" type="datetime-local" class="field-input" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Note</label>
+        <input id="detailFollowNote" class="field-input" placeholder="What was discussed?" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-detail>Close</button>
+        <button class="ghost-btn" id="btnDetailDelete">Delete</button>
+        <button class="ghost-btn" id="btnDetailEdit">Edit</button>
+        <button class="ghost-btn" id="btnDetailCall">Call</button>
+        <button class="primary-btn" id="btnDetailWhatsapp">WhatsApp</button>
+        <button class="primary-btn" id="btnDetailAddFollow">Add Note</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEYS = {
+      leads: 've_leads',
+      projects: 've_projects',
+      profile: 've_profile',
+      theme: 've_theme'
+    };
+
+    const state = {
+      leads: [],
+      projects: [],
+      profile: {
+        businessName: 'Vamika Estate',
+        ownerName: 'Hiren Gohel',
+        phone: '7046869462',
+        accent: '#3B82F6'
+      }
+    };
+
+    let editingLeadId = null;
+    let currentLeadId = null;
+    let deferredPrompt = null;
+
+    function loadState() {
+      try {
+        const leads = localStorage.getItem(STORAGE_KEYS.leads);
+        const projects = localStorage.getItem(STORAGE_KEYS.projects);
+        const profile = localStorage.getItem(STORAGE_KEYS.profile);
+
+        if (leads) state.leads = JSON.parse(leads);
+        if (projects) state.projects = JSON.parse(projects);
+        if (profile) Object.assign(state.profile, JSON.parse(profile));
+      } catch (e) {
+        console.error('Failed to load state', e);
+      }
+    }
+
+    function saveLeads() {
+      localStorage.setItem(STORAGE_KEYS.leads, JSON.stringify(state.leads));
+      updateStats();
+    }
+
+    function saveProjects() {
+      localStorage.setItem(STORAGE_KEYS.projects, JSON.stringify(state.projects));
+      updateStats();
+    }
+
+    function saveProfile() {
+      localStorage.setItem(STORAGE_KEYS.profile, JSON.stringify(state.profile));
+    }
+
+    function applyProfileToUI() {
+      document.getElementById('businessName').value = state.profile.businessName || '';
+      document.getElementById('ownerName').value = state.profile.ownerName || '';
+      document.getElementById('ownerPhone').value = state.profile.phone || '';
+      document.getElementById('themeAccent').value = state.profile.accent || '#3B82F6';
+      document.getElementById('headerPhone').textContent = state.profile.phone || '—';
+      document.getElementById('sidebarPhone').textContent = state.profile.phone || '—';
+      document.getElementById('headerOwner').textContent = state.profile.ownerName || '—';
+    }
+
+    function updateStats() {
+      document.getElementById('statTotalLeads').textContent = 'Total leads: ' + state.leads.length;
+      document.getElementById('statTotalProjects').textContent = 'Total projects: ' + state.projects.length;
+    }
+
+    function formatDateTime(value) {
+      if (!value) return '';
+      const d = new Date(value);
+      if (isNaN(d)) return value;
+      return d.toLocaleString(undefined, {
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function isDueOrPast(value) {
+      if (!value) return false;
+      const d = new Date(value);
+      if (isNaN(d)) return false;
+      return d <= new Date();
+    }
+
+    function renderLeads(filterText = '') {
+      const list = document.getElementById('leadsList');
+      const empty = document.getElementById('emptyLeads');
+
+      const q = filterText.trim().toLowerCase();
+      const items = state.leads.slice().sort((a, b) => (b.id || 0) - (a.id || 0)).filter(l => {
+        if (!q) return true;
+        const inStr = (l.name + ' ' + l.phone + ' ' + (l.location || '') + ' ' + (l.requirement || '')).toLowerCase();
+        return inStr.includes(q);
+      });
+
+      list.innerHTML = '';
+
+      if (!items.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      items.forEach(lead => {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+
+        // Clicking card -> open detail, but ignore button clicks
+        div.addEventListener('click', (e) => {
+          if (e.target.closest('.mini-btn')) return;
+          openLeadDetail(lead.id);
+        });
+
+        const header = document.createElement('div');
+        header.className = 'item-header-row';
+
+        const title = document.createElement('div');
+        title.className = 'item-title';
+        title.textContent = lead.name || 'Unnamed lead';
+
+        const status = document.createElement('span');
+        status.className = 'status-pill';
+        const hasFollow = !!lead.nextFollow;
+        const overdue = hasFollow && isDueOrPast(lead.nextFollow);
+        if (hasFollow) {
+          status.textContent = (overdue ? 'Follow-up: ' : 'Next: ') + formatDateTime(lead.nextFollow);
+          if (overdue) status.classList.add('overdue');
+        } else {
+          status.textContent = 'No follow-up set';
+        }
+
+        header.appendChild(title);
+        header.appendChild(status);
+
+        const line1 = document.createElement('div');
+        line1.className = 'item-line full';
+        line1.innerHTML = '<span>' + (lead.phone || '—') + '</span>' +
+                          '<span>' + (lead.segment || 'Residential') + ' • ' + (lead.requirement || '') + '</span>';
+
+        const line2 = document.createElement('div');
+        line2.className = 'item-line full';
+        line2.innerHTML = '<span>📍 ' + (lead.location || '—') + '</span>' +
+                          '<span>💰 ' + (lead.budget || '—') + '</span>';
+
+        const line3 = document.createElement('div');
+        line3.className = 'item-line full';
+        const lastNote = (lead.followups && lead.followups.length)
+          ? lead.followups[lead.followups.length - 1].note
+          : (lead.notes || '');
+        if (lastNote) {
+          line3.textContent = '📝 ' + lastNote;
+        } else {
+          line3.textContent = '';
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'item-actions';
+
+        const wBtn = document.createElement('button');
+        wBtn.className = 'mini-btn';
+        wBtn.innerHTML = 'WhatsApp';
+        wBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!lead.phone) return;
+          const msg = encodeURIComponent('Hello ' + (lead.name || '') + ',\nThis is Hiren from Vamika Estate.');
+          window.open('https://wa.me/91' + lead.phone.replace(/\D/g, '') + '?text=' + msg, '_blank');
+        };
+
+        const cBtn = document.createElement('button');
+        cBtn.className = 'mini-btn';
+        cBtn.textContent = 'Call';
+        cBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!lead.phone) return;
+          window.location.href = 'tel:' + lead.phone.replace(/\D/g, '');
+        };
+
+        actions.appendChild(wBtn);
+        actions.appendChild(cBtn);
+
+        div.appendChild(header);
+        div.appendChild(line1);
+        div.appendChild(line2);
+        if (lastNote) div.appendChild(line3);
+        div.appendChild(actions);
+        list.appendChild(div);
+      });
+    }
+
+    function renderProjects(filterText = '') {
+      const list = document.getElementById('projectsList');
+      const empty = document.getElementById('emptyProjects');
+
+      const q = filterText.trim().toLowerCase();
+      const items = state.projects.slice().sort((a, b) => (b.id || 0) - (a.id || 0)).filter(p => {
+        if (!q) return true;
+        const inStr = (p.name + ' ' + (p.location || '') + ' ' + (p.config || '')).toLowerCase();
+        return inStr.includes(q);
+      });
+
+      list.innerHTML = '';
+
+      if (!items.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      items.forEach(project => {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+
+        const header = document.createElement('div');
+        header.className = 'item-header-row';
+
+        const title = document.createElement('div');
+        title.className = 'item-title';
+        title.textContent = project.name || 'Unnamed project';
+
+        const badge = document.createElement('span');
+        badge.className = 'status-pill';
+        badge.textContent = 'Project';
+
+        header.appendChild(title);
+        header.appendChild(badge);
+
+        const line1 = document.createElement('div');
+        line1.className = 'item-line full';
+        line1.innerHTML = '<span>📍 ' + (project.location || '—') + '</span>' +
+                          '<span>' + (project.config || '') + '</span>';
+
+        const line2 = document.createElement('div');
+        line2.className = 'item-line full';
+        line2.innerHTML = '<span>💰 ' + (project.price || '—') + '</span>';
+
+        const line3 = document.createElement('div');
+        line3.className = 'item-line full';
+        line3.textContent = project.highlights || '';
+
+        div.appendChild(header);
+        div.appendChild(line1);
+        div.appendChild(line2);
+        if (project.highlights) div.appendChild(line3);
+        list.appendChild(div);
+      });
+    }
+
+    function renderFollowups() {
+      const list = document.getElementById('followupsList');
+      const empty = document.getElementById('emptyFollowups');
+
+      const items = state.leads.filter(l => l.nextFollow && isDueOrPast(l.nextFollow))
+                               .sort((a, b) => new Date(a.nextFollow) - new Date(b.nextFollow));
+
+      list.innerHTML = '';
+
+      if (!items.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      items.forEach(lead => {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+
+        div.addEventListener('click', (e) => {
+          if (e.target.closest('.mini-btn')) return;
+          openLeadDetail(lead.id);
+        });
+
+        const header = document.createElement('div');
+        header.className = 'item-header-row';
+
+        const title = document.createElement('div');
+        title.className = 'item-title';
+        title.textContent = lead.name || 'Unnamed lead';
+
+        const status = document.createElement('span');
+        status.className = 'status-pill overdue';
+        status.textContent = 'Due: ' + formatDateTime(lead.nextFollow);
+
+        header.appendChild(title);
+        header.appendChild(status);
+
+        const line1 = document.createElement('div');
+        line1.className = 'item-line full';
+        line1.innerHTML = '<span>📞 ' + (lead.phone || '—') + '</span>' +
+                          '<span>' + (lead.segment || 'Residential') + ' • ' + (lead.requirement || '') + '</span>';
+
+        const line2 = document.createElement('div');
+        line2.className = 'item-line full';
+        line2.innerHTML = '<span>📍 ' + (lead.location || '—') + '</span>' +
+                          '<span>💰 ' + (lead.budget || '—') + '</span>';
+
+        const lastNote = (lead.followups && lead.followups.length)
+          ? lead.followups[lead.followups.length - 1].note
+          : (lead.notes || '');
+
+        const line3 = document.createElement('div');
+        line3.className = 'item-line full';
+        if (lastNote) {
+          line3.textContent = '📝 ' + lastNote;
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'item-actions';
+
+        const doneBtn = document.createElement('button');
+        doneBtn.className = 'mini-btn';
+        doneBtn.innerHTML = 'Mark done';
+        doneBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          lead.nextFollow = null;
+          saveLeads();
+          renderLeads(document.getElementById('leadSearch').value);
+          renderFollowups();
+        };
+
+        const wBtn = document.createElement('button');
+        wBtn.className = 'mini-btn';
+        wBtn.innerHTML = 'WhatsApp';
+        wBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!lead.phone) return;
+          const msg = encodeURIComponent('Hello ' + (lead.name || '') + ',\nFollowing up from Vamika Estate.');
+          window.open('https://wa.me/91' + lead.phone.replace(/\D/g, '') + '?text=' + msg, '_blank');
+        };
+
+        const cBtn = document.createElement('button');
+        cBtn.className = 'mini-btn';
+        cBtn.textContent = 'Call';
+        cBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!lead.phone) return;
+          window.location.href = 'tel:' + lead.phone.replace(/\D/g, '');
+        };
+
+        actions.appendChild(doneBtn);
+        actions.appendChild(wBtn);
+        actions.appendChild(cBtn);
+
+        div.appendChild(header);
+        div.appendChild(line1);
+        div.appendChild(line2);
+        if (lastNote) div.appendChild(line3);
+        div.appendChild(actions);
+        list.appendChild(div);
+      });
+    }
+
+    function openLeadModal(lead) {
+      const modal = document.getElementById('leadModal');
+      const title = document.getElementById('leadModalTitle');
+
+      if (lead) {
+        editingLeadId = lead.id;
+        title.textContent = 'Edit Lead';
+        document.getElementById('leadName').value = lead.name || '';
+        document.getElementById('leadPhone').value = lead.phone || '';
+        document.getElementById('leadSegment').value = lead.segment || 'Residential';
+        document.getElementById('leadRequirement').value = lead.requirement || '';
+        document.getElementById('leadLocation').value = lead.location || '';
+        document.getElementById('leadBudget').value = lead.budget || '';
+        document.getElementById('leadNextFollow').value = lead.nextFollow || '';
+        document.getElementById('leadNotes').value = lead.notes || '';
+      } else {
+        editingLeadId = null;
+        title.textContent = 'Add Lead';
+        document.getElementById('leadName').value = '';
+        document.getElementById('leadPhone').value = '';
+        document.getElementById('leadSegment').value = 'Residential';
+        document.getElementById('leadRequirement').value = '';
+        document.getElementById('leadLocation').value = '';
+        document.getElementById('leadBudget').value = '';
+        document.getElementById('leadNextFollow').value = '';
+        document.getElementById('leadNotes').value = '';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeLeadModal() {
+      document.getElementById('leadModal').classList.add('hidden');
+      editingLeadId = null;
+    }
+
+    function openProjectModal() {
+      document.getElementById('projectModal').classList.remove('hidden');
+    }
+
+    function closeProjectModal() {
+      document.getElementById('projectModal').classList.add('hidden');
+      document.getElementById('projectName').value = '';
+      document.getElementById('projectLocation').value = '';
+      document.getElementById('projectConfig').value = '';
+      document.getElementById('projectPrice').value = '';
+      document.getElementById('projectHighlights').value = '';
+    }
+
+    function openLeadDetail(id) {
+      const modal = document.getElementById('leadDetailModal');
+      const body = document.getElementById('leadDetailBody');
+      const lead = state.leads.find(l => l.id === id);
+      if (!lead) return;
+      currentLeadId = id;
+
+      const followups = (lead.followups || []).slice().sort((a, b) => new Date(b.at) - new Date(a.at));
+
+      let html = '';
+      html += '<div class="field-group"><div class="field-label">Name</div><div>' + (lead.name || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Phone</div><div>' + (lead.phone || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Segment</div><div>' + (lead.segment || 'Residential') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Requirement</div><div>' + (lead.requirement || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Location</div><div>' + (lead.location || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Budget</div><div>' + (lead.budget || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Next follow-up</div><div>' +
+              (lead.nextFollow ? formatDateTime(lead.nextFollow) : '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Notes</div><div>' + (lead.notes || '—') + '</div></div>';
+
+      html += '<div class="section-label" style="margin-top:10px;">Follow-up history</div>';
+      if (!followups.length) {
+        html += '<div style="font-size:11px;color:var(--muted);margin-top:2px;">No follow-up notes yet.</div>';
+      } else {
+        html += '<div class="history-list">';
+        followups.forEach(f => {
+          html += '<div class="history-item"><span class="history-date">' +
+                  formatDateTime(f.at) +
+                  '</span> - <span>' + (f.note || '') + '</span></div>';
+        });
+        html += '</div>';
+      }
+
+      body.innerHTML = html;
+
+      document.getElementById('detailFollowNote').value = '';
+      document.getElementById('detailFollowWhen').value = '';
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeLeadDetail() {
+      document.getElementById('leadDetailModal').classList.add('hidden');
+      currentLeadId = null;
+    }
+
+    function setupTheme() {
+      const saved = localStorage.getItem(STORAGE_KEYS.theme) || 'dark';
+      const body = document.body;
+      const btnLight = document.getElementById('btnLight');
+      const btnDark = document.getElementById('btnDark');
+
+      function apply(mode) {
+        if (mode === 'light') {
+          body.classList.remove('theme-dark');
+          body.classList.add('theme-light');
+          btnLight.classList.add('active');
+          btnDark.classList.remove('dark-active');
+        } else {
+          body.classList.add('theme-dark');
+          body.classList.remove('theme-light');
+          btnDark.classList.add('dark-active');
+          btnLight.classList.remove('active');
+        }
+        localStorage.setItem(STORAGE_KEYS.theme, mode);
+      }
+
+      btnLight.addEventListener('click', () => apply('light'));
+      btnDark.addEventListener('click', () => apply('dark'));
+
+      apply(saved);
+    }
+
+    function exportLeadsAsCsv() {
+      if (!state.leads.length) {
+        alert('No leads to export yet.');
+        return;
+      }
+      const header = ['Name','Phone','Segment','Requirement','Location','Budget','NextFollow','Notes'];
+      const rows = state.leads.map(l => [
+        l.name || '',
+        l.phone || '',
+        l.segment || '',
+        l.requirement || '',
+        l.location || '',
+        l.budget || '',
+        l.nextFollow || '',
+        l.notes || ''
+      ]);
+      const all = [header, ...rows];
+      const csv = all.map(r => r.map(field => '"' + String(field).replace(/"/g,'""') + '"').join(',')).join('\r\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'vamika-leads.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportLeadsAsExcel() {
+      if (!state.leads.length) {
+        alert('No leads to export yet.');
+        return;
+      }
+      const header = ['Name','Phone','Segment','Requirement','Location','Budget','NextFollow','Notes'];
+      const rows = state.leads.map(l => [
+        l.name || '',
+        l.phone || '',
+        l.segment || '',
+        l.requirement || '',
+        l.location || '',
+        l.budget || '',
+        l.nextFollow || '',
+        l.notes || ''
+      ]);
+      const all = [header, ...rows];
+      const csv = all.map(r => r.map(field => '"' + String(field).replace(/"/g,'""') + '"').join(',')).join('\r\n');
+      const blob = new Blob([csv], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'vamika-leads.xls';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadJsonBackup() {
+      const data = {
+        leads: state.leads,
+        projects: state.projects,
+        profile: state.profile
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'vamika-crm-backup.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function restoreFromJson(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          state.leads = data.leads || [];
+          state.projects = data.projects || [];
+          if (data.profile) Object.assign(state.profile, data.profile);
+          saveLeads();
+          saveProjects();
+          saveProfile();
+          applyProfileToUI();
+          renderLeads(document.getElementById('leadSearch').value);
+          renderProjects(document.getElementById('projectSearch').value);
+          renderFollowups();
+          alert('Backup restored successfully.');
+        } catch (err) {
+          console.error(err);
+          alert('Could not restore backup. File may be invalid.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function activateSection(tabKey) {
+      const map = {
+        leads: 'tab-leads',
+        projects: 'tab-projects',
+        followups: 'tab-followups',
+        settings: 'tab-settings'
+      };
+      Object.entries(map).forEach(([key, id]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (key === tabKey) el.classList.add('active');
+        else el.classList.remove('active');
+      });
+
+      document.querySelectorAll('.sidebar-item').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.section === tabKey);
+      });
+    }
+
+    function setupSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const toggle = document.getElementById('menuToggle');
+
+      function open() {
+        sidebar.classList.add('open');
+        overlay.classList.add('open');
+      }
+
+      function close() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      }
+
+      toggle.addEventListener('click', open);
+      overlay.addEventListener('click', close);
+
+      document.querySelectorAll('.sidebar-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.section;
+          activateSection(key);
+          close();
+        });
+      });
+
+      activateSection('leads');
+    }
+
+    function setupPWA() {
+      const installBtn = document.getElementById('installBtn');
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'inline-flex';
+      });
+
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        try {
+          await deferredPrompt.userChoice;
+        } catch (e) {
+          console.error(e);
+        }
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+      });
+
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js').catch(err => console.error('SW reg failed', err));
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      setupTheme();
+      applyProfileToUI();
+      updateStats();
+      renderLeads();
+      renderProjects();
+      renderFollowups();
+      setupSidebar();
+      setupPWA();
+
+      document.getElementById('btnNewLead').addEventListener('click', () => openLeadModal(null));
+      document.getElementById('btnEmptyNewLead').addEventListener('click', () => openLeadModal(null));
+      document.querySelectorAll('[data-close-lead]').forEach(btn => {
+        btn.addEventListener('click', closeLeadModal);
+      });
+
+      document.getElementById('btnNewProject').addEventListener('click', openProjectModal);
+      document.getElementById('btnEmptyNewProject').addEventListener('click', openProjectModal);
+      document.querySelectorAll('[data-close-project]').forEach(btn => {
+        btn.addEventListener('click', closeProjectModal);
+      });
+
+      document.querySelectorAll('[data-close-detail]').forEach(btn => {
+        btn.addEventListener('click', closeLeadDetail);
+      });
+
+      document.getElementById('btnSaveLead').addEventListener('click', () => {
+        const name = document.getElementById('leadName').value.trim();
+        const phone = document.getElementById('leadPhone').value.trim();
+        if (!name || !phone) {
+          alert('Name and phone are required.');
+          return;
+        }
+        if (editingLeadId) {
+          const lead = state.leads.find(l => l.id === editingLeadId);
+          if (lead) {
+            lead.name = name;
+            lead.phone = phone;
+            lead.segment = document.getElementById('leadSegment').value;
+            lead.requirement = document.getElementById('leadRequirement').value.trim();
+            lead.location = document.getElementById('leadLocation').value.trim();
+            lead.budget = document.getElementById('leadBudget').value.trim();
+            lead.nextFollow = document.getElementById('leadNextFollow').value;
+            lead.notes = document.getElementById('leadNotes').value.trim();
+          }
+        } else {
+          const lead = {
+            id: Date.now(),
+            name,
+            phone,
+            segment: document.getElementById('leadSegment').value,
+            requirement: document.getElementById('leadRequirement').value.trim(),
+            location: document.getElementById('leadLocation').value.trim(),
+            budget: document.getElementById('leadBudget').value.trim(),
+            nextFollow: document.getElementById('leadNextFollow').value,
+            notes: document.getElementById('leadNotes').value.trim(),
+            followups: []
+          };
+          state.leads.unshift(lead);
+        }
+        saveLeads();
+        closeLeadModal();
+        renderLeads(document.getElementById('leadSearch').value);
+        renderFollowups();
+      });
+
+      document.getElementById('btnSaveProject').addEventListener('click', () => {
+        const name = document.getElementById('projectName').value.trim();
+        if (!name) {
+          alert('Project name is required.');
+          return;
+        }
+        const project = {
+          id: Date.now(),
+          name,
+          location: document.getElementById('projectLocation').value.trim(),
+          config: document.getElementById('projectConfig').value.trim(),
+          price: document.getElementById('projectPrice').value.trim(),
+          highlights: document.getElementById('projectHighlights').value.trim()
+        };
+        state.projects.unshift(project);
+        saveProjects();
+        closeProjectModal();
+        renderProjects(document.getElementById('projectSearch').value);
+      });
+
+      document.getElementById('leadSearch').addEventListener('input', (e) => {
+        renderLeads(e.target.value);
+      });
+
+      document.getElementById('projectSearch').addEventListener('input', (e) => {
+        renderProjects(e.target.value);
+      });
+
+      document.getElementById('btnSaveProfile').addEventListener('click', () => {
+        state.profile.businessName = document.getElementById('businessName').value.trim() || 'Vamika Estate';
+        state.profile.ownerName = document.getElementById('ownerName').value.trim() || 'Hiren Gohel';
+        state.profile.phone = document.getElementById('ownerPhone').value.trim() || '7046869462';
+        state.profile.accent = document.getElementById('themeAccent').value.trim() || '#3B82F6';
+        saveProfile();
+        applyProfileToUI();
+        alert('Profile saved.');
+      });
+
+      document.getElementById('btnExportCsv').addEventListener('click', exportLeadsAsCsv);
+      document.getElementById('btnExportExcel').addEventListener('click', exportLeadsAsExcel);
+      document.getElementById('btnDownloadJson').addEventListener('click', downloadJsonBackup);
+      document.getElementById('restoreFile').addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          restoreFromJson(e.target.files[0]);
+        }
+      });
+
+      // Detail modal buttons
+      document.getElementById('btnDetailWhatsapp').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead || !lead.phone) return;
+        const msg = encodeURIComponent('Hello ' + (lead.name || '') + ',\nThis is Hiren from Vamika Estate.');
+        window.open('https://wa.me/91' + lead.phone.replace(/\D/g, '') + '?text=' + msg, '_blank');
+      });
+
+      document.getElementById('btnDetailCall').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead || !lead.phone) return;
+        window.location.href = 'tel:' + lead.phone.replace(/\D/g, '');
+      });
+
+      document.getElementById('btnDetailEdit').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead) return;
+        closeLeadDetail();
+        openLeadModal(lead);
+      });
+
+      document.getElementById('btnDetailDelete').addEventListener('click', () => {
+        if (!confirm('Delete this lead?')) return;
+        state.leads = state.leads.filter(l => l.id !== currentLeadId);
+        saveLeads();
+        closeLeadDetail();
+        renderLeads(document.getElementById('leadSearch').value);
+        renderFollowups();
+      });
+
+      document.getElementById('btnDetailAddFollow').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead) return;
+        const whenVal = document.getElementById('detailFollowWhen').value || new Date().toISOString();
+        const note = document.getElementById('detailFollowNote').value.trim();
+        if (!note) {
+          alert('Please enter a note.');
+          return;
+        }
+        if (!lead.followups) lead.followups = [];
+        lead.followups.push({
+          id: Date.now(),
+          at: whenVal,
+          note
+        });
+        // also update next follow-up date/time
+        lead.nextFollow = whenVal;
+        saveLeads();
+        document.getElementById('detailFollowNote').value = '';
+        document.getElementById('detailFollowWhen').value = '';
+        // refresh detail + lists
+        openLeadDetail(currentLeadId);
+        renderLeads(document.getElementById('leadSearch').value);
+        renderFollowups();
+      });
+    });
+  </script>
+</body>
+</html>
