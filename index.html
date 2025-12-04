@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vamika Estate CRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-elevated: #020617;
+      --card: #020617;
+      --border-subtle: rgba(148, 163, 184, 0.25);
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.12);
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --danger: #f97373;
+      --danger-soft: rgba(248, 113, 113, 0.16);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.8);
+      --shadow-subtle: 0 0 0 1px rgba(148, 163, 184, 0.1);
+      --input-bg: rgba(15, 23, 42, 0.9);
+      --input-border: rgba(148, 163, 184, 0.35);
+    }
+    :root[data-theme="light"] {
+      --bg: #f3f4f6;
+      --bg-elevated: #ffffff;
+      --card: #ffffff;
+      --border-subtle: rgba(148, 163, 184, 0.45);
+      --accent: #16a34a;
+      --accent-soft: rgba(34, 197, 94, 0.12);
+      --text: #020617;
+      --muted: #6b7280;
+      --input-bg: #f9fafb;
+      --input-border: rgba(148, 163, 184, 0.7);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 45%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 12px;
+    }
+    .app-shell {
+      width: 100%;
+      max-width: 460px;
+      height: 100%;
+      max-height: 880px;
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.08), transparent 55%),
+                  radial-gradient(circle at 100% 0, rgba(34, 197, 94, 0.09), transparent 55%),
+                  linear-gradient(145deg, #020617 0, #020617 45%, #020617 100%);
+      border-radius: 32px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.95);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      background-color: var(--bg-elevated);
+    }
+    @media (max-width: 600px) {
+      body { padding: 0; background: var(--bg); }
+      .app-shell {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+    .app-header {
+      padding: 14px 16px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 30% 0, #4ade80, #16a34a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #022c22;
+      font-weight: 800;
+      font-size: 17px;
+      box-shadow: 0 0 0 1px rgba(22, 163, 74, 0.65),
+                  0 12px 30px rgba(22, 163, 74, 0.85);
+    }
+    .app-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .app-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .app-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-live {
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.1);
+      color: #4ade80;
+      font-size: 9px;
+      border: 1px solid rgba(74, 222, 128, 0.6);
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ghost-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 6px 9px;
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.75);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ghost-chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4);
+    }
+    .install-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 10px;
+      font-size: 11px;
+      background: var(--accent-soft);
+      color: #bbf7d0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+      cursor: pointer;
+    }
+    .install-btn span.icon {
+      font-size: 13px;
+    }
+    .tab-bar {
+      display: flex;
+      padding: 4px 12px 10px;
+      gap: 6px;
+      position: relative;
+      z-index: 2;
+    }
+    .tab-pill {
+      flex: 1;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.18s ease-out;
+    }
+    .tab-pill.active {
+      background: radial-gradient(circle at 0 0, rgba(34, 197, 94, 0.55), rgba(22, 101, 52, 0.95));
+      border-color: rgba(74, 222, 128, 1);
+      color: #ecfdf5;
+      box-shadow: 0 12px 30px rgba(22, 163, 74, 0.9);
+    }
+    .tab-pill small {
+      opacity: 0.75;
+    }
+    .tab-pill .count-badge {
+      padding: 0 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.75);
+      color: #a5b4fc;
+      border: 1px solid rgba(129, 140, 248, 0.6);
+    }
+    .content {
+      flex: 1;
+      padding: 6px 12px 12px;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), var(--bg));
+    }
+    .panel {
+      display: none;
+      animation: fadeIn 0.18s ease-out;
+    }
+    .panel.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .search-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .search-input-wrap {
+      flex: 1;
+      position: relative;
+    }
+    .search-input-wrap input {
+      width: 100%;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--input-border);
+      background: rgba(15, 23, 42, 0.96);
+      padding: 7px 26px 7px 26px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+    }
+    :root[data-theme="light"] .search-input-wrap input {
+      background: var(--input-bg);
+    }
+    .search-input-wrap span {
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .search-input-wrap input::placeholder {
+      color: rgba(148, 163, 184, 0.6);
+    }
+    .primary-btn, .ghost-btn, .mini-btn {
+      border-radius: var(--radius-pill);
+      border: none;
+      font-size: 12px;
+      padding: 7px 12px;
+      cursor: pointer;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .primary-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #022c22;
+      box-shadow: 0 12px 30px rgba(22, 163, 74, 0.85);
+    }
+    .ghost-btn {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+    :root[data-theme="light"] .ghost-btn {
+      background: #f9fafb;
+    }
+    .mini-btn {
+      padding: 4px 8px;
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--muted);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+    .mini-btn.danger {
+      color: #fecaca;
+      border-color: rgba(248, 113, 113, 0.7);
+      background: rgba(127, 29, 29, 0.75);
+    }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .empty-state {
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      padding: 16px 12px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.8), #020617);
+      margin-top: 12px;
+    }
+    :root[data-theme="light"] .empty-state {
+      background: #f9fafb;
+    }
+    .empty-state strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .empty-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .item-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      padding: 10px 10px 9px;
+      background: radial-gradient(circle at 0 0, rgba(15, 23, 42, 0.9), #020617);
+      box-shadow: var(--shadow-subtle);
+      position: relative;
+    }
+    :root[data-theme="light"] .item-card {
+      background: #ffffff;
+    }
+    .item-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .item-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .item-chip {
+      padding: 2px 7px;
+      font-size: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+    .item-line {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+    .item-line span.key {
+      color: rgba(148, 163, 184, 0.9);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .item-actions {
+      margin-top: 6px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .status-pill {
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--muted);
+    }
+    .status-hot {
+      border-color: rgba(248, 113, 113, 0.85);
+      color: #fecaca;
+      background: rgba(127, 29, 29, 0.7);
+    }
+    .status-warm {
+      border-color: rgba(234, 179, 8, 0.85);
+      color: #fef9c3;
+      background: rgba(113, 63, 18, 0.7);
+    }
+    .status-cold {
+      border-color: rgba(148, 163, 184, 0.85);
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .tag {
+      padding: 1px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      font-size: 10px;
+      color: var(--muted);
+    }
+    .field-group {
+      margin-bottom: 10px;
+    }
+    .field-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .field-input, .field-select, .field-textarea {
+      width: 100%;
+      border-radius: 11px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      padding: 7px 9px;
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+    }
+    .field-input::placeholder,
+    .field-textarea::placeholder {
+      color: rgba(148, 163, 184, 0.6);
+    }
+    .field-select {
+      padding-right: 26px;
+    }
+    .field-row {
+      display: flex;
+      gap: 8px;
+    }
+    .field-row > .field-group {
+      flex: 1;
+    }
+    .field-textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+    .section-label {
+      font-size: 11px;
+      color: #cbd5f5;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+      margin-top: 4px;
+    }
+    .settings-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px 10px;
+    }
+    @media (max-width: 420px) {
+      .settings-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    .settings-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 10px 10px 11px;
+      background: radial-gradient(circle at 0 0, rgba(30, 64, 175, 0.55), rgba(15, 23, 42, 1));
+      box-shadow: var(--shadow-subtle);
+      margin-bottom: 12px;
+    }
+    :root[data-theme="light"] .settings-card {
+      background: #ffffff;
+    }
+    .settings-card h3 {
+      margin: 0 0 4px;
+      font-size: 13px;
+    }
+    .settings-card p {
+      margin: 0 0 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .settings-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.86);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .modal.hidden {
+      display: none;
+    }
+    .modal-panel {
+      width: 100%;
+      max-width: 430px;
+      max-height: 85vh;
+      background: radial-gradient(circle at 0 0, rgba(15, 23, 42, 1), #020617);
+      border-radius: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: var(--shadow-soft);
+      padding: 12px 12px 11px;
+      display: flex;
+      flex-direction: column;
+    }
+    :root[data-theme="light"] .modal-panel {
+      background: #ffffff;
+    }
+    .modal-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .modal-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 2px;
+      margin-bottom: 4px;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .modal-close-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      width: 24px;
+      height: 24px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .danger-text { color: var(--danger); }
+    .footer-note {
+      padding: 6px 12px 10px;
+      font-size: 10px;
+      color: rgba(148, 163, 184, 0.8);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      border-top: 1px solid rgba(15, 23, 42, 0.9);
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent);
+    }
+    :root[data-theme="light"] .footer-note {
+      background: #f9fafb;
+      border-top-color: rgba(148,163,184,0.5);
+    }
+    .footer-note strong {
+      color: var(--text);
+    }
+    a.link {
+      color: #a5b4fc;
+      text-decoration: none;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand-row">
+        <div class="logo-badge">V</div>
+        <div class="app-title-block">
+          <div class="app-title">Vamika Estate CRM</div>
+          <div class="app-subtitle">
+            <span class="pill-live">LOCAL • OFFLINE • PRIVATE</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="ghost-chip">
+          <span class="ghost-chip-dot"></span>
+          <span id="headerLeadCount">0 leads</span>
+        </div>
+        <button class="install-btn" id="btnInstallPwa">
+          <span class="icon">⬇︎</span><span>Install</span>
+        </button>
+      </div>
+    </header>
+
+    <nav class="tab-bar">
+      <button class="tab-pill active" data-tab="leads">
+        <span>Leads</span>
+        <span class="count-badge" id="tabLeadCount">0</span>
+      </button>
+      <button class="tab-pill" data-tab="projects">
+        <span>Projects</span>
+        <span class="count-badge" id="tabProjectCount">0</span>
+      </button>
+      <button class="tab-pill" data-tab="settings">
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <main class="content">
+      <!-- Leads Panel -->
+      <section class="panel active" id="panel-leads">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <span>🔍</span>
+            <input id="leadSearch" type="search" placeholder="Search name, phone, project, notes..." />
+          </div>
+          <button class="primary-btn" id="btnNewLead">+ Lead</button>
+        </div>
+
+        <div id="emptyLeads" class="empty-state">
+          <strong>No leads yet</strong>
+          Add your first inquiry – it stays only in this phone.
+          <div class="empty-actions">
+            <button class="primary-btn" id="btnEmptyNewLead">+ Add lead</button>
+          </div>
+        </div>
+
+        <div id="leadsList" class="list"></div>
+      </section>
+
+      <!-- Projects Panel -->
+      <section class="panel" id="panel-projects">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <span>🔍</span>
+            <input id="projectSearch" type="search" placeholder="Search project, location, config..." />
+          </div>
+          <button class="primary-btn" id="btnNewProject">+ Project</button>
+        </div>
+
+        <div id="emptyProjects" class="empty-state">
+          <strong>No projects added</strong>
+          Save all your inventory details with full rate breakup.
+          <div class="empty-actions">
+            <button class="primary-btn" id="btnEmptyNewProject">+ Add project</button>
+          </div>
+        </div>
+
+        <div id="projectsList" class="list"></div>
+      </section>
+
+      <!-- Settings Panel -->
+      <section class="panel" id="panel-settings">
+        <div class="settings-card">
+          <h3>Profile</h3>
+          <p>Used in WhatsApp share text and footer.</p>
+          <div class="settings-grid">
+            <div class="field-group">
+              <label class="field-label">Owner name</label>
+              <input id="profileOwner" class="field-input" placeholder="Your name" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Firm name</label>
+              <input id="profileFirm" class="field-input" placeholder="Vamika Estate" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Mobile number</label>
+              <input id="profilePhone" class="field-input" placeholder="+91..." />
+            </div>
+            <div class="field-group">
+              <label class="field-label">WhatsApp number (optional)</label>
+              <input id="profileWhatsapp" class="field-input" placeholder="If different from mobile" />
+            </div>
+          </div>
+          <div class="field-group" style="margin-top:6px;">
+            <label class="field-label">Footer note in messages</label>
+            <input id="profileFooter" class="field-input" placeholder="Thank you for connecting with Vamika Estate." />
+          </div>
+          <div class="settings-actions" style="margin-top:8px;">
+            <button class="primary-btn" id="btnSaveProfile">Save profile</button>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3>Backup, import & export</h3>
+          <p>Full local backup + Excel export and lead import.</p>
+          <div class="settings-actions">
+            <button class="ghost-btn" id="btnBackupData">Backup all data (JSON)</button>
+            <button class="ghost-btn" id="btnRestoreData">Restore backup</button>
+            <button class="ghost-btn" id="btnImportLeads">Import leads (CSV)</button>
+            <button class="ghost-btn" id="btnExportLeads">Export leads (.csv)</button>
+            <button class="ghost-btn" id="btnExportProjects">Export projects (.csv)</button>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3>Appearance</h3>
+          <p>Switch between dark and light mode.</p>
+          <div class="settings-actions">
+            <button class="ghost-btn" id="btnToggleTheme">Switch to light mode</button>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3>WhatsApp templates</h3>
+          <p>Tap to copy, then paste in your client chat.</p>
+          <div class="settings-actions">
+            <button class="ghost-btn" data-wa-template="followup">Follow-up message</button>
+            <button class="ghost-btn" data-wa-template="visit">Site visit confirmation</button>
+            <button class="ghost-btn" data-wa-template="project">Project details share</button>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3>Danger zone</h3>
+          <p>Clear all leads and projects from this device (cannot be undone).</p>
+          <div class="settings-actions">
+            <button class="mini-btn danger" id="btnClearAll">Clear all data</button>
+          </div>
+        </div>
+
+        <div style="font-size:11px;color:var(--muted);padding:4px 2px 40px;">
+          All data stays only inside this phone's browser (localStorage). No login, no cloud sync yet.
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-note">
+      <div>
+        <strong>Vamika Estate CRM</strong><br />
+        <span id="footerProfileText">Single agent • Single phone • Full control</span>
+      </div>
+      <div style="font-size:10px;color:var(--muted);text-align:right;">
+        Local first<br />No monthly fee
+      </div>
+    </footer>
+  </div>
+
+  <!-- Hidden file inputs for backup/import -->
+  <input type="file" id="backupFileInput" accept="application/json" style="display:none" />
+  <input type="file" id="importLeadsFileInput" accept=".csv,text/csv" style="display:none" />
+
+  <!-- Lead Modal -->
+  <div id="leadModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title" id="leadModalTitle">Add lead</div>
+        <button class="modal-close-btn" data-close-lead>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-grid">
+          <div class="field-group">
+            <label class="field-label">Name *</label>
+            <input id="leadName" class="field-input" placeholder="Client full name" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Mobile *</label>
+            <input id="leadPhone" class="field-input" placeholder="+91..." />
+          </div>
+          <div class="field-group">
+            <label class="field-label">WhatsApp</label>
+            <input id="leadWhatsapp" class="field-input" placeholder="If different" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Project / Requirement</label>
+            <input id="leadProject" class="field-input" placeholder="Project name / area / type" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Budget</label>
+            <input id="leadBudget" class="field-input" placeholder="e.g. 40–50L" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Source</label>
+            <input id="leadSource" class="field-input" placeholder="Walk-in, Facebook, OLX, reference..." />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Status</label>
+            <select id="leadStatus" class="field-select">
+              <option value="Hot">Hot</option>
+              <option value="Warm">Warm</option>
+              <option value="Cold">Cold</option>
+              <option value="Closed">Closed</option>
+              <option value="Not interested">Not interested</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Next follow-up</label>
+            <input id="leadFollowUp" type="date" class="field-input" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Notes</label>
+          <textarea id="leadNotes" class="field-textarea" placeholder="Family details, exact need, time line, objections..."></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-lead>Cancel</button>
+        <button class="primary-btn" id="btnSaveLead">Save lead</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lead Detail Modal -->
+  <div id="leadDetailModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title">Lead details</div>
+        <button class="modal-close-btn" data-close-lead-detail>&times;</button>
+      </div>
+      <div class="modal-body" id="leadDetailBody"></div>
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-lead-detail>Close</button>
+        <button class="ghost-btn" id="btnLeadDelete">Delete</button>
+        <button class="ghost-btn" id="btnLeadEdit">Edit</button>
+        <button class="primary-btn" id="btnLeadWhatsapp">WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Modal -->
+  <div id="projectModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title" id="projectModalTitle">Add project</div>
+        <button class="modal-close-btn" data-close-project>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-grid">
+          <div class="field-group">
+            <label class="field-label">Project name *</label>
+            <input id="projectName" class="field-input" placeholder="Project name" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Location</label>
+            <input id="projectLocation" class="field-input" placeholder="Area / road" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Configuration (short)</label>
+            <input id="projectConfig" class="field-input" placeholder="2 & 3 BHK, 3.5 BHK etc." />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Price range (short)</label>
+            <input id="projectPrice" class="field-input" placeholder="From 53L all inclusive" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Highlights</label>
+            <input id="projectHighlights" class="field-input" placeholder="Amenities, corner plot, etc." />
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:10px;">Configurations & sizes</div>
+        <div class="field-group">
+          <label class="field-label">Example format</label>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">
+            2 BHK | Type A – 1180, 1230, 1275 sq.ft<br/>
+            2 BHK | Type B – 1310, 1350 sq.ft<br/>
+            3 BHK – 1650, 1710 sq.yard
+          </div>
+          <textarea id="projectConfigDetail" class="field-textarea" rows="3"
+            placeholder="2 BHK | Type A – 1180, 1230, 1275 sq.ft&#10;3 BHK – 1650, 1710 sq.yard"></textarea>
+        </div>
+
+        <div class="settings-grid" style="margin-top:10px;">
+          <div class="field-group">
+            <label class="field-label">Land area</label>
+            <div style="display:flex;gap:6px;">
+              <input id="projectLandAreaValue" class="field-input" placeholder="e.g. 4500" style="flex:1;" />
+              <select id="projectLandAreaUnit" class="field-select" style="width:110px;">
+                <option value="sq.ft">Sq.ft</option>
+                <option value="sq.yard" selected>SQ.Yard</option>
+                <option value="sq.meter">Sq.meter</option>
+                <option value="acre">Acre</option>
+                <option value="bigha">Bigha</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Architect name</label>
+            <input id="projectArchitect" class="field-input" placeholder="Architect / designer" />
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:12px;">Rate details</div>
+
+        <div class="settings-grid">
+          <div class="field-group">
+            <label class="field-label">Base rate</label>
+            <div style="display:flex;gap:6px;">
+              <input id="rateBaseValue" class="field-input" placeholder="e.g. 4500" style="flex:1;" />
+              <select id="rateBaseUnit" class="field-select" style="width:120px;">
+                <option value="per sq.ft">per sq.ft</option>
+                <option value="per sq.yard">per sq.yard</option>
+                <option value="per sq.meter">per sq.meter</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Other expense package</label>
+            <div style="display:flex;gap:6px;">
+              <input id="rateOtherValue" class="field-input" placeholder="e.g. 650" style="flex:1;" />
+              <select id="rateOtherUnit" class="field-select" style="width:120px;">
+                <option value="per sq.ft">per sq.ft</option>
+                <option value="per sq.yard">per sq.yard</option>
+                <option value="per sq.meter">per sq.meter</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Maintenance deposit</label>
+            <input id="rateMaintDeposit" class="field-input" placeholder="e.g. 75,000 (one time)" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Running maintenance</label>
+            <div style="display:flex;gap:6px;">
+              <input id="rateRunningValue" class="field-input" placeholder="e.g. 1.5" style="flex:1;" />
+              <input id="rateRunningTerm" class="field-input" style="flex:1;"
+                placeholder="per sq.ft per month / per year / for 2 years etc." />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Legal fees</label>
+            <input id="rateLegalFees" class="field-input" placeholder="e.g. 25,000" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Floor rising charge</label>
+            <input id="rateFloorRise" class="field-input" placeholder="e.g. 50 per sq.ft per floor" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Prime location charge (PLC)</label>
+            <div style="display:flex;gap:6px;">
+              <input id="ratePlcValue" class="field-input" placeholder="e.g. 150" style="flex:1;" />
+              <select id="ratePlcType" class="field-select" style="width:140px;">
+                <option value="flat">Flat amount</option>
+                <option value="per sq.ft">Per sq.ft</option>
+                <option value="per sq.yard">Per sq.yard</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Sale deed value</label>
+            <input id="rateSaleDeed" class="field-input" placeholder="e.g. 78,50,000" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Stamp duty</label>
+            <input id="rateStampDuty" class="field-input" placeholder="e.g. 5% or exact amount" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Registration</label>
+            <input id="rateRegistration" class="field-input" placeholder="e.g. 30,000" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Other govt. charges</label>
+            <input id="rateGovtOther" class="field-input" placeholder="Any extra govt charges / notes" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-project>Cancel</button>
+        <button class="primary-btn" id="btnSaveProject">Save project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Detail Modal -->
+  <div id="projectDetailModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title">Project details</div>
+        <button class="modal-close-btn" data-close-project-detail>&times;</button>
+      </div>
+      <div class="modal-body" id="projectDetailBody"></div>
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-project-detail>Close</button>
+        <button class="ghost-btn" id="btnProjectDelete">Delete</button>
+        <button class="ghost-btn" id="btnProjectEdit">Edit</button>
+        <button class="primary-btn" id="btnProjectWhatsapp">WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'vamikaEstateStateV3';
+
+    let state = {
+      leads: [],
+      projects: [],
+      profile: {}
+    };
+
+    let editingLeadId = null;
+    let currentLeadId = null;
+    let editingProjectId = null;
+    let currentProjectId = null;
+    let deferredPrompt = null;
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          state = Object.assign({ leads: [], projects: [], profile: {} }, parsed);
+        }
+      } catch (e) {
+        console.error('Failed to load state', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error('Failed to save state', e);
+      }
+      updateHeaderCounts();
+    }
+
+    function updateHeaderCounts() {
+      const leadCount = state.leads.length;
+      const projectCount = state.projects.length;
+      const headerLead = document.getElementById('headerLeadCount');
+      const tabLead = document.getElementById('tabLeadCount');
+      const tabProject = document.getElementById('tabProjectCount');
+      if (headerLead) headerLead.textContent = leadCount + (leadCount === 1 ? ' lead' : ' leads');
+      if (tabLead) tabLead.textContent = leadCount;
+      if (tabProject) tabProject.textContent = projectCount;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      if (Number.isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+
+    function applyProfileToFooter() {
+      const profile = state.profile || {};
+      const footer = document.getElementById('footerProfileText');
+      if (!footer) return;
+      if (profile.ownerName || profile.firmName) {
+        footer.textContent =
+          (profile.ownerName || '') +
+          (profile.firmName ? ' • ' + profile.firmName : '');
+      } else {
+        footer.textContent = 'Single agent • Single phone • Full control';
+      }
+    }
+
+    function applyTheme() {
+      const profile = state.profile || {};
+      const theme = profile.theme || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      const btn = document.getElementById('btnToggleTheme');
+      if (btn) {
+        btn.textContent = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+      }
+    }
+
+    function openLeadModal(lead) {
+      const modal = document.getElementById('leadModal');
+      const title = document.getElementById('leadModalTitle');
+
+      if (lead) {
+        editingLeadId = lead.id;
+        if (title) title.textContent = 'Edit lead';
+        document.getElementById('leadName').value = lead.name || '';
+        document.getElementById('leadPhone').value = lead.phone || '';
+        document.getElementById('leadWhatsapp').value = lead.whatsapp || '';
+        document.getElementById('leadProject').value = lead.project || '';
+        document.getElementById('leadBudget').value = lead.budget || '';
+        document.getElementById('leadSource').value = lead.source || '';
+        document.getElementById('leadStatus').value = lead.status || 'Hot';
+        document.getElementById('leadFollowUp').value = lead.followUp || '';
+        document.getElementById('leadNotes').value = lead.notes || '';
+      } else {
+        editingLeadId = null;
+        if (title) title.textContent = 'Add lead';
+        document.getElementById('leadName').value = '';
+        document.getElementById('leadPhone').value = '';
+        document.getElementById('leadWhatsapp').value = '';
+        document.getElementById('leadProject').value = '';
+        document.getElementById('leadBudget').value = '';
+        document.getElementById('leadSource').value = '';
+        document.getElementById('leadStatus').value = 'Hot';
+        document.getElementById('leadFollowUp').value = '';
+        document.getElementById('leadNotes').value = '';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeLeadModal() {
+      document.getElementById('leadModal').classList.add('hidden');
+      editingLeadId = null;
+    }
+
+    function openLeadDetail(id) {
+      const modal = document.getElementById('leadDetailModal');
+      const body = document.getElementById('leadDetailBody');
+      const lead = state.leads.find(l => l.id === id);
+      if (!lead) return;
+      currentLeadId = id;
+
+      const safe = v => v || '—';
+      const wrap = (label, value) => (
+        '<div class="field-group">' +
+          '<div class="field-label">' + label + '</div>' +
+          '<div>' + (value || '—') + '</div>' +
+        '</div>'
+      );
+
+      let html = '';
+      html += wrap('Name', safe(lead.name));
+      html += wrap('Mobile', safe(lead.phone));
+      if (lead.whatsapp) html += wrap('WhatsApp', lead.whatsapp);
+      html += wrap('Project / requirement', safe(lead.project));
+      html += wrap('Budget', safe(lead.budget));
+      html += wrap('Source', safe(lead.source));
+      html += wrap('Status', safe(lead.status));
+      if (lead.created) html += wrap('Created', formatDate(lead.created));
+      if (lead.followUp) html += wrap('Next follow-up', formatDate(lead.followUp));
+      html += wrap('Notes', safe(lead.notes));
+
+      body.innerHTML = html;
+      modal.classList.remove('hidden');
+    }
+
+    function closeLeadDetail() {
+      document.getElementById('leadDetailModal').classList.add('hidden');
+      currentLeadId = null;
+    }
+
+    function openProjectModal(project) {
+      const modal = document.getElementById('projectModal');
+      const title = document.getElementById('projectModalTitle');
+
+      if (project) {
+        editingProjectId = project.id;
+        if (title) title.textContent = 'Edit project';
+
+        document.getElementById('projectName').value = project.name || '';
+        document.getElementById('projectLocation').value = project.location || '';
+        document.getElementById('projectConfig').value = project.config || '';
+        document.getElementById('projectPrice').value = project.price || '';
+        document.getElementById('projectHighlights').value = project.highlights || '';
+        document.getElementById('projectConfigDetail').value = project.configDetail || '';
+
+        document.getElementById('projectLandAreaValue').value = project.landAreaValue || '';
+        document.getElementById('projectLandAreaUnit').value = project.landAreaUnit || 'sq.yard';
+        document.getElementById('projectArchitect').value = project.architect || '';
+
+        document.getElementById('rateBaseValue').value = project.rateBaseValue || '';
+        document.getElementById('rateBaseUnit').value = project.rateBaseUnit || 'per sq.ft';
+        document.getElementById('rateOtherValue').value = project.rateOtherValue || '';
+        document.getElementById('rateOtherUnit').value = project.rateOtherUnit || 'per sq.ft';
+        document.getElementById('rateMaintDeposit').value = project.rateMaintDeposit || '';
+        document.getElementById('rateRunningValue').value = project.rateRunningValue || '';
+        document.getElementById('rateRunningTerm').value = project.rateRunningTerm || '';
+        document.getElementById('rateLegalFees').value = project.rateLegalFees || '';
+        document.getElementById('rateFloorRise').value = project.rateFloorRise || '';
+        document.getElementById('ratePlcValue').value = project.ratePlcValue || '';
+        document.getElementById('ratePlcType').value = project.ratePlcType || 'flat';
+        document.getElementById('rateSaleDeed').value = project.rateSaleDeed || '';
+        document.getElementById('rateStampDuty').value = project.rateStampDuty || '';
+        document.getElementById('rateRegistration').value = project.rateRegistration || '';
+        document.getElementById('rateGovtOther').value = project.rateGovtOther || '';
+      } else {
+        editingProjectId = null;
+        if (title) title.textContent = 'Add project';
+
+        document.getElementById('projectName').value = '';
+        document.getElementById('projectLocation').value = '';
+        document.getElementById('projectConfig').value = '';
+        document.getElementById('projectPrice').value = '';
+        document.getElementById('projectHighlights').value = '';
+        document.getElementById('projectConfigDetail').value = '';
+
+        document.getElementById('projectLandAreaValue').value = '';
+        document.getElementById('projectLandAreaUnit').value = 'sq.yard';
+        document.getElementById('projectArchitect').value = '';
+
+        document.getElementById('rateBaseValue').value = '';
+        document.getElementById('rateBaseUnit').value = 'per sq.ft';
+        document.getElementById('rateOtherValue').value = '';
+        document.getElementById('rateOtherUnit').value = 'per sq.ft';
+        document.getElementById('rateMaintDeposit').value = '';
+        document.getElementById('rateRunningValue').value = '';
+        document.getElementById('rateRunningTerm').value = '';
+        document.getElementById('rateLegalFees').value = '';
+        document.getElementById('rateFloorRise').value = '';
+        document.getElementById('ratePlcValue').value = '';
+        document.getElementById('ratePlcType').value = 'flat';
+        document.getElementById('rateSaleDeed').value = '';
+        document.getElementById('rateStampDuty').value = '';
+        document.getElementById('rateRegistration').value = '';
+        document.getElementById('rateGovtOther').value = '';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeProjectModal() {
+      document.getElementById('projectModal').classList.add('hidden');
+      editingProjectId = null;
+    }
+
+    function openProjectDetail(id) {
+      const modal = document.getElementById('projectDetailModal');
+      const body = document.getElementById('projectDetailBody');
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+      currentProjectId = id;
+
+      const safe = v => v || '—';
+      const row = (label, value) =>
+        '<div class="field-group"><div class="field-label">' + label +
+        '</div><div>' + (value || '—') + '</div></div>';
+
+      let html = '';
+      html += row('Project name', safe(project.name));
+      html += row('Location', safe(project.location));
+      html += row('Configuration (short)', safe(project.config));
+      html += row('Price range', safe(project.price));
+      html += row('Highlights', safe(project.highlights));
+      html += row('Configurations & sizes', safe(project.configDetail));
+
+      let land = '—';
+      if (project.landAreaValue) {
+        land = project.landAreaValue + ' ' + (project.landAreaUnit || '');
+      }
+      html += row('Land area', land);
+      html += row('Architect', safe(project.architect));
+
+      html += '<div class="section-label" style="margin-top:10px;">Rate details</div>';
+
+      const makeRate = (label, value) =>
+        '<div class="field-group"><div class="field-label">' + label +
+        '</div><div>' + (value || '—') + '</div></div>';
+
+      let baseRate = '';
+      if (project.rateBaseValue) {
+        baseRate = project.rateBaseValue + (project.rateBaseUnit ? ' ' + project.rateBaseUnit : '');
+      }
+      html += makeRate('Base rate', baseRate);
+
+      let otherRate = '';
+      if (project.rateOtherValue) {
+        otherRate = project.rateOtherValue + (project.rateOtherUnit ? ' ' + project.rateOtherUnit : '');
+      }
+      html += makeRate('Other expense package', otherRate);
+
+      html += makeRate('Maintenance deposit', project.rateMaintDeposit);
+
+      let running = '';
+      if (project.rateRunningValue || project.rateRunningTerm) {
+        running = (project.rateRunningValue || '') +
+          (project.rateRunningTerm ? ' ' + project.rateRunningTerm : '');
+      }
+      html += makeRate('Running maintenance', running);
+
+      html += makeRate('Legal fees', project.rateLegalFees);
+      html += makeRate('Floor rising charge', project.rateFloorRise);
+
+      let plc = '';
+      if (project.ratePlcValue) {
+        plc = project.ratePlcValue + (project.ratePlcType ? ' ' + project.ratePlcType : '');
+      }
+      html += makeRate('Prime location charge (PLC)', plc);
+
+      html += makeRate('Sale deed value', project.rateSaleDeed);
+      html += makeRate('Stamp duty', project.rateStampDuty);
+      html += makeRate('Registration', project.rateRegistration);
+      html += makeRate('Other govt. charges', project.rateGovtOther);
+
+      body.innerHTML = html;
+      modal.classList.remove('hidden');
+    }
+
+    function closeProjectDetail() {
+      document.getElementById('projectDetailModal').classList.add('hidden');
+      currentProjectId = null;
+    }
+
+    function renderLeads(filterText = '') {
+      const list = document.getElementById('leadsList');
+      const empty = document.getElementById('emptyLeads');
+      const q = filterText.trim().toLowerCase();
+
+      const items = state.leads
+        .slice()
+        .sort((a, b) => (b.id || 0) - (a.id || 0))
+        .filter(l => {
+          if (!q) return true;
+          const inStr =
+            (l.name || '') + ' ' +
+            (l.phone || '') + ' ' +
+            (l.project || '') + ' ' +
+            (l.notes || '') + ' ' +
+            (l.budget || '') + ' ' +
+            (l.source || '');
+          return inStr.toLowerCase().includes(q);
+        });
+
+      list.innerHTML = '';
+
+      if (!items.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      items.forEach(lead => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+
+        card.addEventListener('click', (ev) => {
+          if (ev.target.closest('.mini-btn')) return;
+          openLeadDetail(lead.id);
+        });
+
+        const header = document.createElement('div');
+        header.className = 'item-header-row';
+
+        const title = document.createElement('div');
+        title.className = 'item-title';
+        title.textContent = lead.name || 'No name';
+
+        const status = document.createElement('div');
+        const s = (lead.status || 'Hot');
+        const cls =
+          s === 'Hot' ? 'status-pill status-hot' :
+          s === 'Warm' ? 'status-pill status-warm' :
+          s === 'Cold' ? 'status-pill status-cold' : 'status-pill';
+        status.className = cls;
+        status.textContent = s;
+
+        header.appendChild(title);
+        header.appendChild(status);
+
+        const line1 = document.createElement('div');
+        line1.className = 'item-line';
+        line1.innerHTML =
+          '<span><span class="key">Mobile</span><br>' + (lead.phone || '—') + '</span>' +
+          '<span style="text-align:right;"><span class="key">Project</span><br>' + (lead.project || '—') + '</span>';
+
+        const line2 = document.createElement('div');
+        line2.className = 'item-line';
+        line2.innerHTML =
+          '<span><span class="key">Budget</span><br>' + (lead.budget || '—') + '</span>' +
+          '<span style="text-align:right;"><span class="key">Source</span><br>' + (lead.source || '—') + '</span>';
+
+        const line3 = document.createElement('div');
+        line3.className = 'item-line';
+        let follow = '';
+        if (lead.followUp) follow = formatDate(lead.followUp);
+        line3.innerHTML =
+          '<span><span class="key">Next follow-up</span><br>' + (follow || '—') + '</span>' +
+          '<span style="text-align:right;"><span class="key">Created</span><br>' +
+          (lead.created ? formatDate(lead.created) : '—') + '</span>';
+
+        const actions = document.createElement('div');
+        actions.className = 'item-actions';
+
+        const callBtn = document.createElement('button');
+        callBtn.className = 'mini-btn';
+        callBtn.textContent = 'Call';
+        callBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!lead.phone) return;
+          window.location.href = 'tel:' + lead.phone;
+        };
+
+        const waBtn = document.createElement('button');
+        waBtn.className = 'mini-btn';
+        waBtn.textContent = 'WhatsApp';
+        waBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          const profile = state.profile || {};
+          const name = lead.name || '';
+          const project = lead.project || '';
+          const budget = lead.budget || '';
+          const source = lead.source || '';
+          let msg = '';
+          msg += 'Lead details:%0A';
+          if (name) msg += 'Name: ' + name + '%0A';
+          if (lead.phone) msg += 'Mobile: ' + lead.phone + '%0A';
+          if (project) msg += 'Project/Req: ' + project + '%0A';
+          if (budget) msg += 'Budget: ' + budget + '%0A';
+          if (source) msg += 'Source: ' + source + '%0A';
+          if (lead.notes) msg += '%0ANotes: ' + encodeURIComponent(lead.notes) + '%0A';
+          msg += '%0A';
+          if (profile.ownerName || profile.firmName) {
+            msg += (profile.ownerName || '') + ' | ' + (profile.firmName || '') + '%0A';
+          }
+          if (profile.footer) {
+            msg += encodeURIComponent(profile.footer);
+          }
+          const waNumber = (lead.whatsapp || profile.whatsappNumber || lead.phone || '').replace(/\s+/g, '');
+          const url = waNumber
+            ? 'https://wa.me/' + waNumber + '?text=' + msg
+            : 'https://wa.me/?text=' + msg;
+          window.open(url, '_blank');
+        };
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'mini-btn';
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          openLeadModal(lead);
+        };
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'mini-btn danger';
+        delBtn.textContent = 'Delete';
+        delBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!confirm('Delete this lead?')) return;
+          state.leads = state.leads.filter(l => l.id !== lead.id);
+          saveState();
+          renderLeads(document.getElementById('leadSearch').value);
+        };
+
+        actions.appendChild(callBtn);
+        actions.appendChild(waBtn);
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        card.appendChild(header);
+        card.appendChild(line1);
+        card.appendChild(line2);
+        card.appendChild(line3);
+        card.appendChild(actions);
+
+        list.appendChild(card);
+      });
+    }
+
+    function renderProjects(filterText = '') {
+      const list = document.getElementById('projectsList');
+      const empty = document.getElementById('emptyProjects');
+
+      const q = filterText.trim().toLowerCase();
+      const items = state.projects
+        .slice()
+        .sort((a, b) => (b.id || 0) - (a.id || 0))
+        .filter(p => {
+          if (!q) return true;
+          const inStr =
+            (p.name || '') + ' ' +
+            (p.location || '') + ' ' +
+            (p.config || '') + ' ' +
+            (p.configDetail || '');
+          return inStr.toLowerCase().includes(q);
+        });
+
+      list.innerHTML = '';
+
+      if (!items.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      items.forEach(project => {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+
+        div.addEventListener('click', (e) => {
+          if (e.target.closest('.mini-btn')) return;
+          openProjectDetail(project.id);
+        });
+
+        const header = document.createElement('div');
+        header.className = 'item-header-row';
+
+        const title = document.createElement('div');
+        title.className = 'item-title';
+        title.textContent = project.name || 'Unnamed project';
+
+        header.appendChild(title);
+
+        const line1 = document.createElement('div');
+        line1.className = 'item-line full';
+        line1.innerHTML = '<span><span class="key">Config</span><br>' +
+          (project.config || '—') + '</span>';
+
+        const line2 = document.createElement('div');
+        line2.className = 'item-line full';
+        line2.innerHTML =
+          '<span><span class="key">Location</span><br>' + (project.location || '—') + '</span>';
+
+        const actions = document.createElement('div');
+        actions.className = 'item-actions';
+
+        const wBtn = document.createElement('button');
+        wBtn.className = 'mini-btn';
+        wBtn.textContent = 'WhatsApp';
+        wBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          const profile = state.profile || {};
+          let msg = 'Project: ' + (project.name || '') + '%0A';
+          if (project.location) msg += 'Location: ' + project.location + '%0A';
+          if (project.config) msg += 'Config: ' + project.config + '%0A';
+          if (project.price) msg += 'Price: ' + project.price + '%0A';
+          if (project.configDetail) msg += '%0AConfigurations & sizes:%0A' + encodeURIComponent(project.configDetail) + '%0A';
+          if (project.landAreaValue) msg += '%0ALand area: ' + project.landAreaValue + ' ' + (project.landAreaUnit || '') + '%0A';
+          if (project.architect) msg += 'Architect: ' + encodeURIComponent(project.architect) + '%0A';
+
+          if (project.rateBaseValue) msg += '%0ABase rate: ' + project.rateBaseValue + ' ' + (project.rateBaseUnit || '') + '%0A';
+          if (project.rateOtherValue) msg += 'Other exp. pkg: ' + project.rateOtherValue + ' ' + (project.rateOtherUnit || '') + '%0A';
+          if (project.rateMaintDeposit) msg += 'Maint. deposit: ' + encodeURIComponent(project.rateMaintDeposit) + '%0A';
+          if (project.rateRunningValue || project.rateRunningTerm) {
+            msg += 'Running maintenance: ' + (project.rateRunningValue || '') + ' ' +
+              (project.rateRunningTerm || '') + '%0A';
+          }
+          if (project.rateLegalFees) msg += 'Legal fees: ' + encodeURIComponent(project.rateLegalFees) + '%0A';
+          if (project.rateFloorRise) msg += 'Floor rise: ' + encodeURIComponent(project.rateFloorRise) + '%0A';
+          if (project.ratePlcValue) msg += 'PLC: ' + project.ratePlcValue + ' ' + (project.ratePlcType || '') + '%0A';
+          if (project.rateSaleDeed) msg += 'Sale deed value: ' + encodeURIComponent(project.rateSaleDeed) + '%0A';
+          if (project.rateStampDuty) msg += 'Stamp duty: ' + encodeURIComponent(project.rateStampDuty) + '%0A';
+          if (project.rateRegistration) msg += 'Registration: ' + encodeURIComponent(project.rateRegistration) + '%0A';
+          if (project.rateGovtOther) msg += 'Other govt. charges: ' + encodeURIComponent(project.rateGovtOther) + '%0A';
+
+          msg += '%0A';
+          if (profile.ownerName || profile.firmName) {
+            msg += (profile.ownerName || '') + ' | ' + (profile.firmName || '') + '%0A';
+          }
+          if (profile.footer) msg += encodeURIComponent(profile.footer);
+
+          const url = 'https://wa.me/?text=' + msg;
+          window.open(url, '_blank');
+        };
+
+        const eBtn = document.createElement('button');
+        eBtn.className = 'mini-btn';
+        eBtn.textContent = 'Edit';
+        eBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          openProjectModal(project);
+        };
+
+        const dBtn = document.createElement('button');
+        dBtn.className = 'mini-btn danger';
+        dBtn.textContent = 'Delete';
+        dBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!confirm('Delete this project?')) return;
+          state.projects = state.projects.filter(p => p.id !== project.id);
+          saveState();
+          renderProjects(document.getElementById('projectSearch').value);
+        };
+
+        actions.appendChild(wBtn);
+        actions.appendChild(eBtn);
+        actions.appendChild(dBtn);
+
+        div.appendChild(header);
+        if (project.config) div.appendChild(line1);
+        div.appendChild(line2);
+        div.appendChild(actions);
+        list.appendChild(div);
+      });
+    }
+
+    function exportAsExcelFromArray(data, filename) {
+      if (!data || !data.length) {
+        alert('Nothing to export.');
+        return;
+      }
+      const header = Object.keys(data[0]);
+      const lines = [];
+      lines.push(header.join(','));
+      data.forEach(row => {
+        const vals = header.map(key => {
+          let v = row[key];
+          if (v === undefined || v === null) v = '';
+          v = String(v).replace(/"/g, '""');
+          if (v.search(/[" ,\n]/) >= 0) v = '"' + v + '"';
+          return v;
+        });
+        lines.push(vals.join(','));
+      });
+      const csv = '\ufeff' + lines.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || 'export.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function backupData() {
+      try {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const date = new Date().toISOString().slice(0,10);
+        a.href = url;
+        a.download = 'vamika-backup-' + date + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        console.error(e);
+        alert('Backup failed.');
+      }
+    }
+
+    function handleBackupFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed || typeof parsed !== 'object') {
+            alert('Invalid backup file.');
+            return;
+          }
+          state = Object.assign({ leads: [], projects: [], profile: {} }, parsed);
+          saveState();
+          renderLeads(document.getElementById('leadSearch').value);
+          renderProjects(document.getElementById('projectSearch').value);
+          applyProfileToFooter();
+          applyTheme();
+          alert('Backup restored.');
+        } catch (err) {
+          console.error(err);
+          alert('Failed to read backup file.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function parseCsv(text) {
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (!lines.length) return [];
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const parts = lines[i].split(',');
+        if (!parts.length) continue;
+        const row = {};
+        headers.forEach((h, idx) => {
+          row[h] = (parts[idx] || '').trim();
+        });
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function handleImportLeadsFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const rows = parseCsv(e.target.result);
+          if (!rows.length) {
+            alert('No rows found in CSV.');
+            return;
+          }
+          let added = 0;
+          rows.forEach(r => {
+            const name = r.name || r['client name'] || r['customer name'] || '';
+            const phone = r.mobile || r.phone || r['mobile no'] || r['phone no'] || '';
+            if (!name || !phone) return;
+            const lead = {
+              id: Date.now() + Math.floor(Math.random()*100000),
+              created: new Date().toISOString(),
+              name,
+              phone,
+              whatsapp: r.whatsapp || '',
+              project: r.project || r.requirement || '',
+              budget: r.budget || '',
+              source: r.source || '',
+              status: r.status || 'Warm',
+              followUp: r['next followup'] || r['next follow-up'] || '',
+              notes: r.notes || ''
+            };
+            state.leads.unshift(lead);
+            added++;
+          });
+          saveState();
+          renderLeads(document.getElementById('leadSearch').value);
+          alert('Imported ' + added + ' leads.');
+        } catch (err) {
+          console.error(err);
+          alert('Import failed.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function setupWhatsAppTemplates() {
+      const templates = {
+        followup: "Hello [Client Name],\n\nJust checking regarding your property requirement at [Area/Project]. If you are free this week, we can plan site visits as per your time.\n\n– [Your Name], [Firm Name]",
+        visit: "Hello [Client Name],\n\nThis is a reminder for our site visit at [Project Name] on [Date & Time]. Location share karta rahish / already shared che.\n\nIf timing change karvu hoy to please inform.\n\n– [Your Name], [Firm Name]",
+        project: "Hello [Client Name],\n\nSharing key details for [Project Name]:\n• Config: [2 & 3 BHK]\n• Size: [1180–1750 sq.ft]\n• Price: [From 53L all inclusive]\n• Location: [Area]\n\nIf you wish I can share full rate breakup and plan details also.\n\n– [Your Name], [Firm Name]"
+      };
+
+      document.querySelectorAll('[data-wa-template]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-wa-template');
+          const profile = state.profile || {};
+          let text = templates[key] || '';
+          text = text.replace('[Your Name]', profile.ownerName || 'Vamika Estate')
+                     .replace('[Firm Name]', profile.firmName || 'Vamika Estate');
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+              alert('Template copied. Paste in WhatsApp chat.');
+            }).catch(() => {
+              alert(text);
+            });
+          } else {
+            alert(text);
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      updateHeaderCounts();
+
+      const p = state.profile || {};
+      if (p.ownerName) document.getElementById('profileOwner').value = p.ownerName;
+      if (p.firmName) document.getElementById('profileFirm').value = p.firmName;
+      if (p.phone) document.getElementById('profilePhone').value = p.phone;
+      if (p.whatsappNumber) document.getElementById('profileWhatsapp').value = p.whatsappNumber;
+      if (p.footer) document.getElementById('profileFooter').value = p.footer;
+      applyProfileToFooter();
+      applyTheme();
+
+      renderLeads();
+      renderProjects();
+
+      document.querySelectorAll('.tab-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.getAttribute('data-tab');
+          document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+          const panel = document.getElementById('panel-' + tab);
+          if (panel) panel.classList.add('active');
+        });
+      });
+
+      const leadSearch = document.getElementById('leadSearch');
+      if (leadSearch) {
+        leadSearch.addEventListener('input', () => {
+          renderLeads(leadSearch.value);
+        });
+      }
+      const projectSearch = document.getElementById('projectSearch');
+      if (projectSearch) {
+        projectSearch.addEventListener('input', () => {
+          renderProjects(projectSearch.value);
+        });
+      }
+
+      document.getElementById('btnNewLead').addEventListener('click', () => openLeadModal(null));
+      document.getElementById('btnEmptyNewLead').addEventListener('click', () => openLeadModal(null));
+      document.querySelectorAll('[data-close-lead]').forEach(btn => {
+        btn.addEventListener('click', closeLeadModal);
+      });
+
+      document.getElementById('btnSaveLead').addEventListener('click', () => {
+        const name = document.getElementById('leadName').value.trim();
+        const phone = document.getElementById('leadPhone').value.trim();
+        if (!name || !phone) {
+          alert('Name and mobile are required.');
+          return;
+        }
+        const leadData = {
+          name,
+          phone,
+          whatsapp: document.getElementById('leadWhatsapp').value.trim(),
+          project: document.getElementById('leadProject').value.trim(),
+          budget: document.getElementById('leadBudget').value.trim(),
+          source: document.getElementById('leadSource').value.trim(),
+          status: document.getElementById('leadStatus').value,
+          followUp: document.getElementById('leadFollowUp').value,
+          notes: document.getElementById('leadNotes').value.trim()
+        };
+        if (editingLeadId) {
+          const existing = state.leads.find(l => l.id === editingLeadId);
+          if (existing) {
+            Object.assign(existing, leadData);
+          }
+        } else {
+          const lead = Object.assign({}, leadData, {
+            id: Date.now(),
+            created: new Date().toISOString()
+          });
+          state.leads.unshift(lead);
+        }
+        saveState();
+        closeLeadModal();
+        renderLeads(leadSearch ? leadSearch.value : '');
+      });
+
+      document.querySelectorAll('[data-close-lead-detail]').forEach(btn => {
+        btn.addEventListener('click', closeLeadDetail);
+      });
+
+      document.getElementById('btnLeadDelete').addEventListener('click', () => {
+        if (!confirm('Delete this lead?')) return;
+        state.leads = state.leads.filter(l => l.id !== currentLeadId);
+        saveState();
+        closeLeadDetail();
+        renderLeads(leadSearch ? leadSearch.value : '');
+      });
+
+      document.getElementById('btnLeadEdit').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead) return;
+        closeLeadDetail();
+        openLeadModal(lead);
+      });
+
+      document.getElementById('btnLeadWhatsapp').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead) return;
+        const profile = state.profile || {};
+        const name = lead.name || '';
+        const project = lead.project || '';
+        const budget = lead.budget || '';
+        const source = lead.source || '';
+        let msg = '';
+        msg += 'Lead details:%0A';
+        if (name) msg += 'Name: ' + name + '%0A';
+        if (lead.phone) msg += 'Mobile: ' + lead.phone + '%0A';
+        if (project) msg += 'Project/Req: ' + project + '%0A';
+        if (budget) msg += 'Budget: ' + budget + '%0A';
+        if (source) msg += 'Source: ' + source + '%0A';
+        if (lead.notes) msg += '%0ANotes: ' + encodeURIComponent(lead.notes) + '%0A';
+        msg += '%0A';
+        if (profile.ownerName || profile.firmName) {
+          msg += (profile.ownerName || '') + ' | ' + (profile.firmName || '') + '%0A';
+        }
+        if (profile.footer) {
+          msg += encodeURIComponent(profile.footer);
+        }
+        const waNumber = (lead.whatsapp || profile.whatsappNumber || lead.phone || '').replace(/\s+/g, '');
+        const url = waNumber
+          ? 'https://wa.me/' + waNumber + '?text=' + msg
+          : 'https://wa.me/?text=' + msg;
+        window.open(url, '_blank');
+      });
+
+      document.getElementById('btnNewProject').addEventListener('click', () => openProjectModal(null));
+      document.getElementById('btnEmptyNewProject').addEventListener('click', () => openProjectModal(null));
+      document.querySelectorAll('[data-close-project]').forEach(btn => {
+        btn.addEventListener('click', closeProjectModal);
+      });
+
+      document.querySelectorAll('[data-close-project-detail]').forEach(btn => {
+        btn.addEventListener('click', closeProjectDetail);
+      });
+
+      document.getElementById('btnSaveProject').addEventListener('click', () => {
+        const name = document.getElementById('projectName').value.trim();
+        if (!name) {
+          alert('Project name is required.');
+          return;
+        }
+
+        const location = document.getElementById('projectLocation').value.trim();
+        const config = document.getElementById('projectConfig').value.trim();
+        const price = document.getElementById('projectPrice').value.trim();
+        const highlights = document.getElementById('projectHighlights').value.trim();
+        const configDetail = document.getElementById('projectConfigDetail').value.trim();
+
+        const landAreaValue = document.getElementById('projectLandAreaValue').value.trim();
+        const landAreaUnit = document.getElementById('projectLandAreaUnit').value;
+        const architect = document.getElementById('projectArchitect').value.trim();
+
+        const rateBaseValue = document.getElementById('rateBaseValue').value.trim();
+        const rateBaseUnit = document.getElementById('rateBaseUnit').value;
+        const rateOtherValue = document.getElementById('rateOtherValue').value.trim();
+        const rateOtherUnit = document.getElementById('rateOtherUnit').value;
+        const rateMaintDeposit = document.getElementById('rateMaintDeposit').value.trim();
+        const rateRunningValue = document.getElementById('rateRunningValue').value.trim();
+        const rateRunningTerm = document.getElementById('rateRunningTerm').value.trim();
+        const rateLegalFees = document.getElementById('rateLegalFees').value.trim();
+        const rateFloorRise = document.getElementById('rateFloorRise').value.trim();
+        const ratePlcValue = document.getElementById('ratePlcValue').value.trim();
+        const ratePlcType = document.getElementById('ratePlcType').value;
+        const rateSaleDeed = document.getElementById('rateSaleDeed').value.trim();
+        const rateStampDuty = document.getElementById('rateStampDuty').value.trim();
+        const rateRegistration = document.getElementById('rateRegistration').value.trim();
+        const rateGovtOther = document.getElementById('rateGovtOther').value.trim();
+
+        if (editingProjectId) {
+          const project = state.projects.find(p => p.id === editingProjectId);
+          if (project) {
+            project.name = name;
+            project.location = location;
+            project.config = config;
+            project.price = price;
+            project.highlights = highlights;
+            project.configDetail = configDetail;
+            project.landAreaValue = landAreaValue;
+            project.landAreaUnit = landAreaUnit;
+            project.architect = architect;
+            project.rateBaseValue = rateBaseValue;
+            project.rateBaseUnit = rateBaseUnit;
+            project.rateOtherValue = rateOtherValue;
+            project.rateOtherUnit = rateOtherUnit;
+            project.rateMaintDeposit = rateMaintDeposit;
+            project.rateRunningValue = rateRunningValue;
+            project.rateRunningTerm = rateRunningTerm;
+            project.rateLegalFees = rateLegalFees;
+            project.rateFloorRise = rateFloorRise;
+            project.ratePlcValue = ratePlcValue;
+            project.ratePlcType = ratePlcType;
+            project.rateSaleDeed = rateSaleDeed;
+            project.rateStampDuty = rateStampDuty;
+            project.rateRegistration = rateRegistration;
+            project.rateGovtOther = rateGovtOther;
+          }
+        } else {
+          const project = {
+            id: Date.now(),
+            name,
+            location,
+            config,
+            price,
+            highlights,
+            configDetail,
+            landAreaValue,
+            landAreaUnit,
+            architect,
+            rateBaseValue,
+            rateBaseUnit,
+            rateOtherValue,
+            rateOtherUnit,
+            rateMaintDeposit,
+            rateRunningValue,
+            rateRunningTerm,
+            rateLegalFees,
+            rateFloorRise,
+            ratePlcValue,
+            ratePlcType,
+            rateSaleDeed,
+            rateStampDuty,
+            rateRegistration,
+            rateGovtOther
+          };
+          state.projects.unshift(project);
+        }
+
+        saveState();
+        closeProjectModal();
+        renderProjects(projectSearch ? projectSearch.value : '');
+      });
+
+      document.getElementById('btnProjectWhatsapp').addEventListener('click', () => {
+        const project = state.projects.find(p => p.id === currentProjectId);
+        if (!project) return;
+        const profile = state.profile || {};
+        let msg = 'Project: ' + (project.name || '') + '%0A';
+        if (project.location) msg += 'Location: ' + project.location + '%0A';
+        if (project.config) msg += 'Config: ' + project.config + '%0A';
+        if (project.price) msg += 'Price: ' + project.price + '%0A';
+        if (project.configDetail) msg += '%0AConfigurations & sizes:%0A' + encodeURIComponent(project.configDetail) + '%0A';
+        if (project.landAreaValue) msg += '%0ALand area: ' + project.landAreaValue + ' ' + (project.landAreaUnit || '') + '%0A';
+        if (project.architect) msg += 'Architect: ' + encodeURIComponent(project.architect) + '%0A';
+
+        if (project.rateBaseValue) msg += '%0ABase rate: ' + project.rateBaseValue + ' ' + (project.rateBaseUnit || '') + '%0A';
+        if (project.rateOtherValue) msg += 'Other exp. pkg: ' + project.rateOtherValue + ' ' + (project.rateOtherUnit || '') + '%0A';
+        if (project.rateMaintDeposit) msg += 'Maint. deposit: ' + encodeURIComponent(project.rateMaintDeposit) + '%0A';
+        if (project.rateRunningValue || project.rateRunningTerm) {
+          msg += 'Running maintenance: ' + (project.rateRunningValue || '') + ' ' +
+            (project.rateRunningTerm || '') + '%0A';
+        }
+        if (project.rateLegalFees) msg += 'Legal fees: ' + encodeURIComponent(project.rateLegalFees) + '%0A';
+        if (project.rateFloorRise) msg += 'Floor rise: ' + encodeURIComponent(project.rateFloorRise) + '%0A';
+        if (project.ratePlcValue) msg += 'PLC: ' + project.ratePlcValue + ' ' + (project.ratePlcType || '') + '%0A';
+        if (project.rateSaleDeed) msg += 'Sale deed value: ' + encodeURIComponent(project.rateSaleDeed) + '%0A';
+        if (project.rateStampDuty) msg += 'Stamp duty: ' + encodeURIComponent(project.rateStampDuty) + '%0A';
+        if (project.rateRegistration) msg += 'Registration: ' + encodeURIComponent(project.rateRegistration) + '%0A';
+        if (project.rateGovtOther) msg += 'Other govt. charges: ' + encodeURIComponent(project.rateGovtOther) + '%0A';
+
+        msg += '%0A';
+        if (profile.ownerName || profile.firmName) {
+          msg += (profile.ownerName || '') + ' | ' + (profile.firmName || '') + '%0A';
+        }
+        if (profile.footer) msg += encodeURIComponent(profile.footer);
+
+        const url = 'https://wa.me/?text=' + msg;
+        window.open(url, '_blank');
+      });
+
+      document.getElementById('btnProjectDelete').addEventListener('click', () => {
+        if (!confirm('Delete this project?')) return;
+        state.projects = state.projects.filter(p => p.id !== currentProjectId);
+        saveState();
+        closeProjectDetail();
+        renderProjects(projectSearch ? projectSearch.value : '');
+      });
+
+      document.getElementById('btnProjectEdit').addEventListener('click', () => {
+        const project = state.projects.find(p => p.id === currentProjectId);
+        if (!project) return;
+        closeProjectDetail();
+        openProjectModal(project);
+      });
+
+      document.getElementById('btnSaveProfile').addEventListener('click', () => {
+        const profile = {
+          ownerName: document.getElementById('profileOwner').value.trim(),
+          firmName: document.getElementById('profileFirm').value.trim(),
+          phone: document.getElementById('profilePhone').value.trim(),
+          whatsappNumber: document.getElementById('profileWhatsapp').value.trim(),
+          footer: document.getElementById('profileFooter').value.trim(),
+          theme: (state.profile && state.profile.theme) || 'dark'
+        };
+        state.profile = profile;
+        saveState();
+        applyProfileToFooter();
+        alert('Profile saved.');
+      });
+
+      document.getElementById('btnBackupData').addEventListener('click', backupData);
+      document.getElementById('btnRestoreData').addEventListener('click', () => {
+        const input = document.getElementById('backupFileInput');
+        if (input) input.click();
+      });
+      document.getElementById('backupFileInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        handleBackupFile(file);
+        e.target.value = '';
+      });
+
+      document.getElementById('btnImportLeads').addEventListener('click', () => {
+        const input = document.getElementById('importLeadsFileInput');
+        if (input) input.click();
+      });
+      document.getElementById('importLeadsFileInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        handleImportLeadsFile(file);
+        e.target.value = '';
+      });
+
+      document.getElementById('btnExportLeads').addEventListener('click', () => {
+        if (!state.leads.length) {
+          alert('No leads to export.');
+          return;
+        }
+        const rows = state.leads.map(l => ({
+          Name: l.name || '',
+          Mobile: l.phone || '',
+          WhatsApp: l.whatsapp || '',
+          Project: l.project || '',
+          Budget: l.budget || '',
+          Source: l.source || '',
+          Status: l.status || '',
+          'Next follow-up': l.followUp || '',
+          Created: l.created || '',
+          Notes: l.notes || ''
+        }));
+        exportAsExcelFromArray(rows, 'vamika-leads.csv');
+      });
+
+      document.getElementById('btnExportProjects').addEventListener('click', () => {
+        if (!state.projects.length) {
+          alert('No projects to export.');
+          return;
+        }
+        const rows = state.projects.map(p => ({
+          Name: p.name || '',
+          Location: p.location || '',
+          ConfigShort: p.config || '',
+          PriceRange: p.price || '',
+          Highlights: p.highlights || '',
+          ConfigDetail: p.configDetail || '',
+          LandArea: (p.landAreaValue || '') + ' ' + (p.landAreaUnit || ''),
+          Architect: p.architect || '',
+          BaseRate: (p.rateBaseValue || '') + ' ' + (p.rateBaseUnit || ''),
+          OtherExp: (p.rateOtherValue || '') + ' ' + (p.rateOtherUnit || ''),
+          MaintDeposit: p.rateMaintDeposit || '',
+          RunningMaint: (p.rateRunningValue || '') + ' ' + (p.rateRunningTerm || ''),
+          LegalFees: p.rateLegalFees || '',
+          FloorRise: p.rateFloorRise || '',
+          PLC: (p.ratePlcValue || '') + ' ' + (p.ratePlcType || ''),
+          SaleDeed: p.rateSaleDeed || '',
+          StampDuty: p.rateStampDuty || '',
+          Registration: p.rateRegistration || '',
+          GovtOther: p.rateGovtOther || ''
+        }));
+        exportAsExcelFromArray(rows, 'vamika-projects.csv');
+      });
+
+      document.getElementById('btnClearAll').addEventListener('click', () => {
+        if (!confirm('This will delete all leads and projects from this device. Continue?')) return;
+        state = { leads: [], projects: [], profile: state.profile || {} };
+        saveState();
+        renderLeads();
+        renderProjects();
+        alert('All leads and projects cleared from this device.');
+      });
+
+      document.getElementById('btnToggleTheme').addEventListener('click', () => {
+        const profile = state.profile || {};
+        const current = profile.theme || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        profile.theme = next;
+        state.profile = profile;
+        saveState();
+        applyTheme();
+      });
+
+      setupWhatsAppTemplates();
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+      });
+
+      const installBtn = document.getElementById('btnInstallPwa');
+      if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            try {
+              await deferredPrompt.userChoice;
+            } catch (e) {}
+            deferredPrompt = null;
+          } else {
+            alert('iPhone: Tap Share and choose "Add to Home Screen" to install.');
+          }
+        });
+      }
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js').catch(err => {
+          console.warn('SW registration failed', err);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
