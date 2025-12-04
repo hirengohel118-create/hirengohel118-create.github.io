@@ -1,0 +1,2202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vamika Estate CRM</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.theme-dark {
+      --bg: #020617;
+      --card-bg: #020617;
+      --card-elevated: #0f172a;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-soft: rgba(59, 130, 246, 0.15);
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --danger: #f97373;
+    }
+
+    body.theme-light {
+      --bg: #f9fafb;
+      --card-bg: #ffffff;
+      --card-elevated: #ffffff;
+      --text: #0f172a;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-soft: rgba(37, 99, 235, 0.12);
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --danger: #dc2626;
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px 0 8px;
+      z-index: 40;
+      box-shadow:0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-bar-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color:#e5e7eb;
+    }
+
+    .hamburger-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.9);
+      cursor: pointer;
+    }
+
+    .hamburger-icon {
+      width: 16px;
+      height: 12px;
+      position: relative;
+    }
+
+    .hamburger-icon span {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: #e5e7eb;
+    }
+
+    .hamburger-icon span:nth-child(1) { top: 0; }
+    .hamburger-icon span:nth-child(2) { top: 5px; }
+    .hamburger-icon span:nth-child(3) { bottom: 0; }
+
+    .install-btn {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      padding: 4px 10px;
+      font-size: 11px;
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.6);
+      backdrop-filter: blur(3px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 39;
+    }
+
+    .sidebar-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 260px;
+      background: #020617;
+      color: #e5e7eb;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      z-index: 41;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 10px 10px;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(135deg,#22c55e,#16a34a);
+      font-weight:700;
+      font-size:18px;
+      color:#020617;
+    }
+
+    .sidebar-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .sidebar-subtitle {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .sidebar-menu {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-item {
+      border-radius: 999px;
+      border:none;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      font-size:13px;
+      background:transparent;
+      color:#e5e7eb;
+      cursor:pointer;
+    }
+
+    .sidebar-item .icon {
+      width:18px;
+      text-align:center;
+    }
+
+    .sidebar-item.active {
+      background:#0f172a;
+    }
+
+    .sidebar-footer {
+      margin-top:auto;
+      font-size:11px;
+      color:#9ca3af;
+      padding:8px 4px 4px;
+    }
+
+    .app-shell {
+      padding-top:56px;
+      padding-bottom:16px;
+      max-width:720px;
+      margin:0 auto;
+    }
+
+    .header-card {
+      margin:12px 12px 8px;
+      border-radius:16px;
+      background: radial-gradient(circle at top left, rgba(59,130,246,0.45), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(34,197,94,0.45), transparent 55%),
+                  #020617;
+      box-shadow:0 18px 60px rgba(15,23,42,0.7);
+      padding:12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:#e5e7eb;
+    }
+
+    .logo-pill {
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.7);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      font-weight:700;
+      background:rgba(15,23,42,0.7);
+    }
+
+    .brand-text {
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+
+    .brand-name-main {
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:0.05em;
+    }
+
+    .brand-name-sub {
+      font-size:16px;
+      font-weight:500;
+      margin-left:4px;
+      opacity:0.9;
+    }
+
+    .owner-line {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:11px;
+      color:#cbd5f5;
+    }
+    .owner-line .dot {
+      width:3px;
+      height:3px;
+      border-radius:999px;
+      background:#38bdf8;
+    }
+
+    .main-tabs {
+      display:flex;
+      margin:8px 12px 0;
+      border-radius:999px;
+      background:rgba(15,23,42,0.85);
+      padding:3px;
+      gap:3px;
+    }
+
+    .tab-btn {
+      flex:1;
+      border-radius:999px;
+      border:none;
+      padding:6px 0;
+      font-size:12px;
+      color:#9ca3af;
+      background:transparent;
+      cursor:pointer;
+    }
+
+    .tab-btn.active {
+      background:rgba(15,23,42,1);
+      color:#e5e7eb;
+      font-weight:500;
+    }
+
+    .section {
+      display:none;
+      margin:8px 12px 0;
+    }
+    .section.active {
+      display:block;
+    }
+
+    .card {
+      border-radius:14px;
+      background:var(--card-bg);
+      box-shadow:0 10px 40px rgba(15,23,42,0.55);
+      border:1px solid rgba(148,163,184,0.3);
+      padding:10px;
+    }
+
+    .section-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:6px;
+    }
+
+    .section-title {
+      font-size:14px;
+      font-weight:600;
+    }
+
+    .primary-btn {
+      border-radius:999px;
+      border:none;
+      padding:6px 14px;
+      font-size:12px;
+      background:var(--primary);
+      color:#f9fafb;
+      cursor:pointer;
+    }
+
+    .ghost-btn {
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      padding:5px 12px;
+      font-size:12px;
+      background:transparent;
+      color:var(--text);
+      cursor:pointer;
+    }
+
+    .search-row {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      margin-bottom:6px;
+    }
+
+    .search-input {
+      flex:1;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:rgba(15,23,42,0.8);
+      color:var(--text);
+      padding:6px 10px;
+      font-size:12px;
+    }
+
+    body.theme-light .search-input {
+      background:#ffffff;
+    }
+
+    .pill-filter {
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.6);
+      color:var(--muted);
+    }
+
+    .list {
+      margin-top:4px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      max-height:calc(100vh - 230px);
+      overflow-y:auto;
+      padding-right:2px;
+    }
+
+    .empty-state {
+      padding:16px 4px;
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .item-card {
+      border-radius:12px;
+      background:var(--card-elevated);
+      padding:8px 9px;
+      border:1px solid rgba(148,163,184,0.35);
+    }
+
+    body.theme-light .item-card {
+      background:#ffffff;
+    }
+
+    .item-header-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:2px;
+      gap:6px;
+    }
+
+    .item-title {
+      font-size:13px;
+      font-weight:600;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .status-pill {
+      font-size:10px;
+      padding:2px 7px;
+      border-radius:999px;
+      background:var(--primary-soft);
+      color:var(--primary);
+    }
+
+    .item-line {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:11px;
+      color:var(--muted);
+      margin-top:2px;
+      gap:6px;
+    }
+
+    .item-line.full span:first-child {
+      max-width:70%;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .item-actions {
+      margin-top:6px;
+      display:flex;
+      gap:6px;
+      justify-content:flex-end;
+    }
+
+    .mini-btn {
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      padding:3px 9px;
+      font-size:11px;
+      background:transparent;
+      color:var(--text);
+      cursor:pointer;
+    }
+
+    .danger-text {
+      color:var(--danger);
+    }
+
+    .modal {
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.75);
+      backdrop-filter:blur(3px);
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      z-index:50;
+    }
+
+    .modal.hidden {
+      display:none;
+    }
+
+    .modal-panel {
+      width:100%;
+      max-width:720px;
+      max-height:88vh;
+      border-radius:18px 18px 0 0;
+      background:var(--card-bg);
+      border:1px solid rgba(148,163,184,0.6);
+      padding:10px;
+      box-shadow:0 -12px 40px rgba(15,23,42,0.65);
+      overflow-y:auto;
+    }
+
+    body.theme-light .modal-panel {
+      background:#ffffff;
+    }
+
+    .modal-header-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+
+    .modal-title {
+      font-size:15px;
+      font-weight:650;
+    }
+
+    .modal-close-btn {
+      border:none;
+      background:transparent;
+      font-size:18px;
+      color:var(--muted);
+      cursor:pointer;
+    }
+
+    .modal-actions {
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:6px;
+      margin-top:10px;
+    }
+
+    .field-group {
+      margin-bottom:6px;
+    }
+
+    .field-label {
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:3px;
+    }
+
+    .field-input,
+    .field-select,
+    textarea.field-input {
+      width:100%;
+      border-radius:10px;
+      border:1px solid var(--border-subtle);
+      background:rgba(15,23,42,0.8);
+      color:var(--text);
+      padding:6px 8px;
+      font-size:12px;
+    }
+
+    body.theme-light .field-input,
+    body.theme-light .field-select,
+    body.theme-light textarea.field-input {
+      background:#ffffff;
+    }
+
+    .field-select {
+      padding-right:20px;
+    }
+
+    textarea.field-input {
+      resize:vertical;
+      min-height:60px;
+    }
+
+    .settings-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+    }
+
+    @media (max-width:560px){
+      .settings-grid {
+        grid-template-columns:1fr;
+      }
+    }
+
+    .section-label {
+      font-size:12px;
+      font-weight:600;
+      margin-bottom:4px;
+    }
+
+    .history-list {
+      margin-top:6px;
+      border-left:2px solid rgba(148,163,184,0.6);
+      padding-left:10px;
+      font-size:11px;
+      color:var(--muted);
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .history-item {
+      position:relative;
+    }
+
+    .history-item::before {
+      content:'';
+      position:absolute;
+      left:-11px;
+      top:4px;
+      width:6px;
+      height:6px;
+      border-radius:999px;
+      background:var(--primary);
+    }
+
+    .history-date {
+      font-weight:500;
+      margin-right:4px;
+    }
+
+    .stats-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-bottom:6px;
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .stat-pill {
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="top-left">
+      <button id="menuToggle" class="hamburger-btn" aria-label="Open menu">
+        <div class="hamburger-icon">
+          <span></span><span></span><span></span>
+        </div>
+      </button>
+      <div class="top-bar-title">Vamika Estate</div>
+    </div>
+    <button id="installBtn" class="install-btn">
+      <span>⬇</span>
+      <span>Install</span>
+    </button>
+  </div>
+
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <nav id="sidebar" class="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">V</div>
+      <div>
+        <div class="sidebar-title">Vamika Estate</div>
+        <div class="sidebar-subtitle"><span id="sidebarOwner">Hiren Gohel</span> · <span id="sidebarPhone">7046869462</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu">
+      <button class="sidebar-item active" data-section="leads">
+        <span class="icon">👤</span>
+        <span>Leads</span>
+      </button>
+      <button class="sidebar-item" data-section="projects">
+        <span class="icon">🏢</span>
+        <span>Projects</span>
+      </button>
+      <button class="sidebar-item" data-section="followups" style="position:relative;">
+        <span class="icon">⏱️</span>
+        <span>Follow-ups</span>
+        <span id="sidebarFollowCount"
+          style="position:absolute; right:16px; top:50%; transform:translateY(-50%);
+                 background:#ef4444; color:white; font-size:10px; padding:2px 6px;
+                 border-radius:999px; display:none;">
+        </span>
+      </button>
+      <button class="sidebar-item" data-section="settings">
+        <span class="icon">⚙️</span>
+        <span>Settings</span>
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      All data stays on this device. Take a JSON backup before changing phone.
+    </div>
+  </nav>
+
+  <div class="app-shell">
+    <header class="header-card">
+      <div class="logo-pill">V</div>
+      <div class="brand-text">
+        <div>
+          <span class="brand-name-main">Vamika</span>
+          <span class="brand-name-sub">Estate</span>
+        </div>
+        <div class="owner-line">
+          <span id="headerOwner">Hiren Gohel</span>
+          <span class="dot"></span>
+          <span id="headerPhone">7046869462</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-tabs">
+      <button id="tab-leads" class="tab-btn active" data-section="leads">Leads</button>
+      <button id="tab-projects" class="tab-btn" data-section="projects">Projects</button>
+      <button id="tab-followups" class="tab-btn" data-section="followups">Follow-ups</button>
+      <button id="tab-settings" class="tab-btn" data-section="settings">Settings</button>
+    </div>
+
+    <main>
+      <!-- Leads section -->
+      <section id="section-leads" class="section active">
+        <div class="card">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Leads</div>
+            </div>
+            <button id="btnNewLead" class="primary-btn">+ Add lead</button>
+          </div>
+          <div class="stats-row">
+            <div class="stat-pill" id="statTotalLeads">Total leads: 0</div>
+            <div class="stat-pill" id="statTodayFollowups">Today follow-ups: 0</div>
+          </div>
+          <div class="search-row">
+            <input id="leadSearch" class="search-input" placeholder="Search by name, phone, location or requirement" />
+          </div>
+          <div id="emptyLeads" class="empty-state">No leads yet. Tap "Add lead" to create your first one.</div>
+          <div id="leadsList" class="list"></div>
+        </div>
+      </section>
+
+      <!-- Projects section -->
+      <section id="section-projects" class="section">
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">Projects</div>
+            <button id="btnNewProject" class="primary-btn">+ Add project</button>
+          </div>
+          <div class="search-row">
+            <input id="projectSearch" class="search-input" placeholder="Search by name, location or config" />
+          </div>
+          <div id="emptyProjects" class="empty-state">No projects added yet. Tap "Add project".</div>
+          <div id="projectsList" class="list"></div>
+        </div>
+      </section>
+
+      <!-- Follow-ups section -->
+      <section id="section-followups" class="section">
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">Today & upcoming follow-ups</div>
+          </div>
+          <div id="emptyFollowups" class="empty-state">No upcoming follow-ups found.</div>
+          <div id="followupsList" class="list"></div>
+        </div>
+      </section>
+
+      <!-- Settings section -->
+      <section id="section-settings" class="section">
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">Profile & backup</div>
+          </div>
+
+          <div class="settings-grid">
+            <div class="field-group">
+              <label class="field-label">Business name</label>
+              <input id="businessName" class="field-input" placeholder="Vamika Estate" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Owner name</label>
+              <input id="ownerName" class="field-input" placeholder="Hiren Gohel" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Phone number</label>
+              <input id="ownerPhone" class="field-input" placeholder="7046869462" />
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-top:8px;">Theme</div>
+          <div class="settings-grid">
+            <div class="field-group">
+              <label class="field-label">Mode</label>
+              <div style="display:flex;gap:6px;">
+                <button id="btnLight" class="ghost-btn">Light</button>
+                <button id="btnDark" class="ghost-btn">Dark</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Accent color (hex)</label>
+              <input id="themeAccent" class="field-input" placeholder="#3B82F6" />
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-top:8px;">Backup</div>
+          <div class="settings-grid">
+            <div class="field-group">
+              <label class="field-label">Export leads & projects</label>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button id="btnExportCsv" class="ghost-btn">Export CSV</button>
+                <button id="btnExportExcel" class="ghost-btn">Export Excel</button>
+                <button id="btnDownloadJson" class="ghost-btn">Download JSON backup</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Restore from JSON backup</label>
+              <input id="restoreFile" type="file" class="field-input" />
+            </div>
+          </div>
+
+          <div class="modal-actions" style="margin-top:10px;justify-content:flex-start;">
+            <button id="btnSaveProfile" class="primary-btn">Save profile</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Lead modal -->
+  <div id="leadModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title" id="leadModalTitle">Add lead</div>
+        <button class="modal-close-btn" data-close-lead>&times;</button>
+      </div>
+      <div class="settings-grid">
+        <div class="field-group">
+          <label class="field-label">Name *</label>
+          <input id="leadName" class="field-input" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Phone *</label>
+          <input id="leadPhone" class="field-input" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Segment</label>
+          <select id="leadSegment" class="field-select">
+            <option value="Hot">Hot</option>
+            <option value="Warm">Warm</option>
+            <option value="Cold">Cold</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Requirement</label>
+          <input id="leadRequirement" class="field-input" placeholder="2 BHK in..." />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Location</label>
+          <input id="leadLocation" class="field-input" placeholder="Area / project" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Budget</label>
+          <input id="leadBudget" class="field-input" placeholder="e.g. 50-60L" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Next follow-up</label>
+          <input id="leadNextFollow" type="datetime-local" class="field-input" />
+        </div>
+      </div>
+      <div class="field-group" style="margin-top:4px;">
+        <label class="field-label">Notes</label>
+        <textarea id="leadNotes" class="field-input" rows="3"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-lead>Cancel</button>
+        <button id="btnSaveLead" class="primary-btn">Save lead</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lead detail modal -->
+  <div id="leadDetailModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title">Lead details</div>
+        <button class="modal-close-btn" data-close-detail>&times;</button>
+      </div>
+      <div id="leadDetailBody"></div>
+
+      <div class="section-label" style="margin-top:10px;">Add follow-up note</div>
+      <div class="settings-grid">
+        <div class="field-group">
+          <label class="field-label">When</label>
+          <input id="detailFollowWhen" type="datetime-local" class="field-input" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Note *</label>
+          <input id="detailFollowNote" class="field-input" placeholder="Call back, site visit, etc." />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-detail>Close</button>
+        <button class="ghost-btn" id="btnDetailDelete"><span class="danger-text">Delete</span></button>
+        <button class="ghost-btn" id="btnDetailEdit">Edit</button>
+        <button class="ghost-btn" id="btnDetailCall">Call</button>
+        <button class="ghost-btn" id="btnDetailWhatsapp">WhatsApp</button>
+        <button class="primary-btn" id="btnDetailAddFollow">Add follow-up</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project modal (add/edit) -->
+  <div id="projectModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title" id="projectModalTitle">Add project</div>
+        <button class="modal-close-btn" data-close-project>&times;</button>
+      </div>
+
+      <!-- Basic details -->
+      <div class="settings-grid">
+        <div class="field-group">
+          <label class="field-label">Project name *</label>
+          <input id="projectName" class="field-input" placeholder="Project name" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Location</label>
+          <input id="projectLocation" class="field-input" placeholder="Area / road" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Configuration (short)</label>
+          <input id="projectConfig" class="field-input" placeholder="2 & 3 BHK, 3.5 BHK etc." />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Price range (short)</label>
+          <input id="projectPrice" class="field-input" placeholder="From 53L all inclusive" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Highlights</label>
+          <input id="projectHighlights" class="field-input" placeholder="Amenities, corner plot, etc." />
+        </div>
+      </div>
+
+      <!-- Config + Sizes detail (free text) -->
+      <div class="section-label" style="margin-top:10px;">Configurations & Sizes (detail)</div>
+      <div class="field-group">
+        <label class="field-label">Example format</label>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">
+          2 BHK | Type A – 1180, 1230, 1275 sq.ft<br/>
+          2 BHK | Type B – 1310, 1350 sq.ft<br/>
+          3 BHK – 1650, 1710 sq.yard
+        </div>
+        <textarea id="projectConfigDetail" class="field-input" rows="3"
+          placeholder="2 BHK | Type A – 1180, 1230, 1275 sq.ft&#10;3 BHK – 1650, 1710 sq.yard"></textarea>
+      </div>
+
+      <!-- Land area + architect -->
+      <div class="settings-grid" style="margin-top:10px;">
+        <div class="field-group">
+          <label class="field-label">Land area</label>
+          <div style="display:flex;gap:6px;">
+            <input id="projectLandAreaValue" class="field-input" placeholder="e.g. 4500" style="flex:1;" />
+            <select id="projectLandAreaUnit" class="field-select" style="width:110px;">
+              <option value="sq.ft">Sq.ft</option>
+              <option value="sq.yard" selected>SQ.Yard</option>
+              <option value="sq.meter">Sq.meter</option>
+              <option value="acre">Acre</option>
+              <option value="bigha">Bigha</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Architect name</label>
+          <input id="projectArchitect" class="field-input" placeholder="Architect / designer" />
+        </div>
+      </div>
+
+      <!-- Rate details -->
+      <div class="section-label" style="margin-top:12px;">Rate details</div>
+
+      <div class="settings-grid">
+        <div class="field-group">
+          <label class="field-label">Base rate</label>
+          <div style="display:flex;gap:6px;">
+            <input id="rateBaseValue" class="field-input" placeholder="e.g. 4500" style="flex:1;" />
+            <select id="rateBaseUnit" class="field-select" style="width:120px;">
+              <option value="per sq.ft">per sq.ft</option>
+              <option value="per sq.yard">per sq.yard</option>
+              <option value="per sq.meter">per sq.meter</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Other expense package</label>
+          <div style="display:flex;gap:6px;">
+            <input id="rateOtherValue" class="field-input" placeholder="e.g. 650" style="flex:1;" />
+            <select id="rateOtherUnit" class="field-select" style="width:120px;">
+              <option value="per sq.ft">per sq.ft</option>
+              <option value="per sq.yard">per sq.yard</option>
+              <option value="per sq.meter">per sq.meter</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Maintenance deposit</label>
+          <input id="rateMaintDeposit" class="field-input" placeholder="e.g. 75,000 (one time)" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Running maintenance</label>
+          <div style="display:flex;gap:6px;">
+            <input id="rateRunningValue" class="field-input" placeholder="e.g. 1.5" style="flex:1;" />
+            <input id="rateRunningTerm" class="field-input" style="flex:1;"
+              placeholder="per sq.ft per month / per year / for 2 years etc." />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Legal fees</label>
+          <input id="rateLegalFees" class="field-input" placeholder="e.g. 25,000" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Floor rising charge</label>
+          <input id="rateFloorRise" class="field-input" placeholder="e.g. 50 per sq.ft per floor" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Prime location charge (PLC)</label>
+          <div style="display:flex;gap:6px;">
+            <input id="ratePlcValue" class="field-input" placeholder="e.g. 150" style="flex:1;" />
+            <select id="ratePlcType" class="field-select" style="width:140px;">
+              <option value="flat">Flat amount</option>
+              <option value="per sq.ft">Per sq.ft</option>
+              <option value="per sq.yard">Per sq.yard</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Sale deed value</label>
+          <input id="rateSaleDeed" class="field-input" placeholder="e.g. 78,50,000" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Stamp duty</label>
+          <input id="rateStampDuty" class="field-input" placeholder="e.g. 5% or exact amount" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Registration</label>
+          <input id="rateRegistration" class="field-input" placeholder="e.g. 30,000" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Other govt. charges</label>
+          <input id="rateGovtOther" class="field-input" placeholder="Any extra govt charges / notes" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-project>Cancel</button>
+        <button class="primary-btn" id="btnSaveProject">Save project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project detail modal -->
+  <div id="projectDetailModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <div class="modal-header-row">
+        <div class="modal-title">Project details</div>
+        <button class="modal-close-btn" data-close-project-detail>&times;</button>
+      </div>
+      <div id="projectDetailBody" style="font-size:12px;"></div>
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close-project-detail>Close</button>
+        <button class="ghost-btn" id="btnProjectDelete"><span class="danger-text">Delete</span></button>
+        <button class="ghost-btn" id="btnProjectEdit">Edit</button>
+        <button class="primary-btn" id="btnProjectWhatsapp">WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEYS = {
+      leads: 'vamika_leads_v1',
+      projects: 'vamika_projects_v1',
+      profile: 'vamika_profile_v1',
+      theme: 'vamika_theme_v1'
+    };
+
+    const state = {
+      leads: [],
+      projects: [],
+      profile: {
+        businessName: 'Vamika Estate',
+        ownerName: 'Hiren Gohel',
+        phone: '7046869462',
+        accent: '#3B82F6'
+      }
+    };
+
+    let editingLeadId = null;
+    let currentLeadId = null;
+    let editingProjectId = null;
+    let currentProjectId = null;
+    let deferredPrompt = null;
+
+    function loadState() {
+      try {
+        const leads = localStorage.getItem(STORAGE_KEYS.leads);
+        const projects = localStorage.getItem(STORAGE_KEYS.projects);
+        const profile = localStorage.getItem(STORAGE_KEYS.profile);
+        if (leads) state.leads = JSON.parse(leads);
+        if (projects) state.projects = JSON.parse(projects);
+        if (profile) Object.assign(state.profile, JSON.parse(profile));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function saveLeads() {
+      localStorage.setItem(STORAGE_KEYS.leads, JSON.stringify(state.leads));
+      updateStats();
+    }
+
+    function saveProjects() {
+      localStorage.setItem(STORAGE_KEYS.projects, JSON.stringify(state.projects));
+    }
+
+    function saveProfile() {
+      localStorage.setItem(STORAGE_KEYS.profile, JSON.stringify(state.profile));
+      applyProfileToUI();
+    }
+
+    function applyAccentTheme(hex, depth) {
+      document.documentElement.style.setProperty('--primary', hex || '#3B82F6');
+      document.documentElement.style.setProperty('--primary-soft', 'rgba(59,130,246,0.15)');
+    }
+
+    function applyProfileToUI() {
+      const business = state.profile.businessName || 'Vamika Estate';
+      const owner = state.profile.ownerName || 'Hiren Gohel';
+      const phone = state.profile.phone || '7046869462';
+
+      document.querySelector('.top-bar-title').textContent = business;
+      const headerOwner = document.getElementById('headerOwner');
+      const headerPhone = document.getElementById('headerPhone');
+      const sidebarOwner = document.getElementById('sidebarOwner');
+      const sidebarPhone = document.getElementById('sidebarPhone');
+
+      if (headerOwner) headerOwner.textContent = owner;
+      if (headerPhone) headerPhone.textContent = phone;
+      if (sidebarOwner) sidebarOwner.textContent = owner;
+      if (sidebarPhone) sidebarPhone.textContent = phone;
+
+      const businessInput = document.getElementById('businessName');
+      const ownerInput = document.getElementById('ownerName');
+      const phoneInput = document.getElementById('ownerPhone');
+      const accentInput = document.getElementById('themeAccent');
+
+      if (businessInput) businessInput.value = state.profile.businessName || '';
+      if (ownerInput) ownerInput.value = state.profile.ownerName || '';
+      if (phoneInput) phoneInput.value = state.profile.phone || '';
+      if (accentInput) accentInput.value = state.profile.accent || '#3B82F6';
+
+      applyAccentTheme(state.profile.accent, 70);
+    }
+
+    function formatDateTime(iso) {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return iso;
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mi = String(d.getMinutes()).padStart(2, '0');
+        return dd + '-' + mm + '-' + yyyy + ' ' + hh + ':' + mi;
+      } catch (e) {
+        return iso;
+      }
+    }
+
+    function updateStats() {
+      const total = state.leads.length;
+      let todayCount = 0;
+      const today = new Date();
+      const d0 = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+      state.leads.forEach(l => {
+        if (!l.nextFollow) return;
+        const d = new Date(l.nextFollow);
+        if (isNaN(d.getTime())) return;
+        const key = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+        if (key === d0) todayCount++;
+      });
+      const statTotal = document.getElementById('statTotalLeads');
+      const statToday = document.getElementById('statTodayFollowups');
+      if (statTotal) statTotal.textContent = 'Total leads: ' + total;
+      if (statToday) statToday.textContent = 'Today follow-ups: ' + todayCount;
+
+      const badge = document.getElementById('sidebarFollowCount');
+      if (badge) {
+        badge.textContent = todayCount || '';
+        badge.style.display = todayCount ? 'inline-flex' : 'none';
+      }
+    }
+
+    function renderLeads(filterText = '') {
+      const list = document.getElementById('leadsList');
+      const empty = document.getElementById('emptyLeads');
+      const q = filterText.trim().toLowerCase();
+
+      const items = state.leads
+        .slice()
+        .sort((a,b) => (b.id || 0) - (a.id || 0))
+        .filter(lead => {
+          if (!q) return true;
+          const str = (
+            (lead.name || '') + ' ' +
+            (lead.phone || '') + ' ' +
+            (lead.location || '') + ' ' +
+            (lead.requirement || '') + ' ' +
+            (lead.segment || '')
+          ).toLowerCase();
+          return str.includes(q);
+        });
+
+      list.innerHTML = '';
+
+      if (!items.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      items.forEach(lead => {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+
+        div.addEventListener('click', () => {
+          openLeadDetail(lead.id);
+        });
+
+        const header = document.createElement('div');
+        header.className = 'item-header-row';
+
+        const title = document.createElement('div');
+        title.className = 'item-title';
+        title.textContent = lead.name || 'Unnamed lead';
+
+        const badge = document.createElement('span');
+        badge.className = 'status-pill';
+        badge.textContent = lead.segment || 'Lead';
+
+        header.appendChild(title);
+        header.appendChild(badge);
+
+        const line1 = document.createElement('div');
+        line1.className = 'item-line full';
+        line1.innerHTML = '<span>' + (lead.phone || 'No phone') + '</span>' +
+                          '<span>' + (lead.budget || '') + '</span>';
+
+        const line2 = document.createElement('div');
+        line2.className = 'item-line full';
+        line2.innerHTML = '<span>' + (lead.requirement || 'No requirement') + '</span>' +
+                          '<span>' + (lead.location || '') + '</span>';
+
+        const line3 = document.createElement('div');
+        line3.className = 'item-line full';
+        const lastNote = (lead.followups && lead.followups.length)
+          ? lead.followups[lead.followups.length - 1].note
+          : (lead.notes || '');
+        if (lastNote) {
+          line3.textContent = '📝 ' + lastNote;
+        } else {
+          line3.textContent = '';
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'item-actions';
+
+        const wBtn = document.createElement('button');
+        wBtn.className = 'mini-btn';
+        wBtn.textContent = 'WhatsApp';
+        wBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!lead.phone) return;
+          const msg = encodeURIComponent('Hello ' + (lead.name || '') + ',\nThis is ' +
+            ((state.profile && state.profile.ownerName) || 'Vamika Estate') + '.');
+          window.open('https://wa.me/91' + lead.phone.replace(/\\D/g, '') + '?text=' + msg, '_blank');
+        };
+
+        const cBtn = document.createElement('button');
+        cBtn.className = 'mini-btn';
+        cBtn.textContent = 'Call';
+        cBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!lead.phone) return;
+          window.location.href = 'tel:' + lead.phone.replace(/\\D/g, '');
+        };
+
+        actions.appendChild(wBtn);
+        actions.appendChild(cBtn);
+
+        div.appendChild(header);
+        div.appendChild(line1);
+        div.appendChild(line2);
+        if (lastNote) div.appendChild(line3);
+        div.appendChild(actions);
+        list.appendChild(div);
+      });
+    }
+
+    function renderProjects(filterText = '') {
+      const list = document.getElementById('projectsList');
+      const empty = document.getElementById('emptyProjects');
+
+      const q = filterText.trim().toLowerCase();
+      const items = state.projects
+        .slice()
+        .sort((a,b) => (b.id || 0) - (a.id || 0))
+        .filter(p => {
+          if (!q) return true;
+          const str = (
+            (p.name || '') + ' ' +
+            (p.location || '') + ' ' +
+            (p.config || '') + ' ' +
+            (p.configDetail || '')
+          ).toLowerCase();
+          return str.includes(q);
+        });
+
+      list.innerHTML = '';
+
+      if (!items.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      items.forEach(project => {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+
+        div.addEventListener('click', (e) => {
+          if (e.target.closest('.mini-btn')) return;
+          openProjectDetail(project.id);
+        });
+
+        const header = document.createElement('div');
+        header.className = 'item-header-row';
+
+        const title = document.createElement('div');
+        title.className = 'item-title';
+        title.textContent = project.name || 'Unnamed project';
+
+        header.appendChild(title);
+
+        const line1 = document.createElement('div');
+        line1.className = 'item-line full';
+        line1.innerHTML =
+          '<span>' + (project.config || '') + '</span>' +
+          '<span>' + (project.location || '—') + '</span>';
+
+        const line2 = document.createElement('div');
+        line2.className = 'item-line full';
+        line2.innerHTML =
+          '<span>' + (project.price || '') + '</span>' +
+          '<span></span>';
+
+        const actions = document.createElement('div');
+        actions.className = 'item-actions';
+
+        const wBtn = document.createElement('button');
+        wBtn.className = 'mini-btn';
+        wBtn.textContent = 'WhatsApp';
+        wBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          const owner = (state.profile && state.profile.ownerName) || 'Vamika Estate';
+          let msg = 'Project: ' + (project.name || '') + '\\n';
+          if (project.config) msg += 'Config: ' + project.config + '\\n';
+          if (project.price) msg += 'Price: ' + project.price + '\\n';
+          if (project.location) msg += 'Location: ' + project.location + '\\n';
+          if (project.configDetail) msg += '\\nSizes:\\n' + project.configDetail + '\\n';
+          msg += '\\nShared by ' + owner;
+          window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+        };
+
+        const eBtn = document.createElement('button');
+        eBtn.className = 'mini-btn';
+        eBtn.textContent = 'Edit';
+        eBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          openProjectModal(project);
+        };
+
+        const dBtn = document.createElement('button');
+        dBtn.className = 'mini-btn';
+        dBtn.innerHTML = '<span class="danger-text">Delete</span>';
+        dBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (!confirm('Delete this project?')) return;
+          state.projects = state.projects.filter(p => p.id !== project.id);
+          saveProjects();
+          renderProjects(document.getElementById('projectSearch').value);
+        };
+
+        actions.appendChild(wBtn);
+        actions.appendChild(eBtn);
+        actions.appendChild(dBtn);
+
+        div.appendChild(header);
+        div.appendChild(line1);
+        div.appendChild(line2);
+        div.appendChild(actions);
+        list.appendChild(div);
+      });
+    }
+
+    function renderFollowups() {
+      const list = document.getElementById('followupsList');
+      const empty = document.getElementById('emptyFollowups');
+      const upcoming = [];
+
+      const now = new Date();
+
+      state.leads.forEach(lead => {
+        if (!lead.nextFollow) return;
+        const d = new Date(lead.nextFollow);
+        if (isNaN(d.getTime())) return;
+        upcoming.push({ leadId: lead.id, at: d, lead });
+      });
+
+      upcoming.sort((a,b) => a.at - b.at);
+
+      list.innerHTML = '';
+
+      if (!upcoming.length) {
+        empty.style.display = 'block';
+      } else {
+        empty.style.display = 'none';
+      }
+
+      upcoming.forEach(item => {
+        const lead = item.lead;
+        const div = document.createElement('div');
+        div.className = 'item-card';
+        div.addEventListener('click', () => openLeadDetail(lead.id));
+
+        const header = document.createElement('div');
+        header.className = 'item-header-row';
+
+        const title = document.createElement('div');
+        title.className = 'item-title';
+        title.textContent = lead.name || 'Unnamed lead';
+
+        const when = document.createElement('span');
+        when.style.fontSize = '11px';
+        when.style.color = 'var(--muted)';
+        when.textContent = formatDateTime(item.at.toISOString());
+
+        header.appendChild(title);
+        header.appendChild(when);
+
+        const line1 = document.createElement('div');
+        line1.className = 'item-line full';
+        line1.innerHTML = '<span>' + (lead.requirement || '') + '</span>' +
+                          '<span>' + (lead.location || '') + '</span>';
+
+        div.appendChild(header);
+        div.appendChild(line1);
+        list.appendChild(div);
+      });
+
+      updateStats();
+    }
+
+    function openLeadModal(lead) {
+      const modal = document.getElementById('leadModal');
+      const title = document.getElementById('leadModalTitle');
+      if (lead) {
+        editingLeadId = lead.id;
+        if (title) title.textContent = 'Edit lead';
+        document.getElementById('leadName').value = lead.name || '';
+        document.getElementById('leadPhone').value = lead.phone || '';
+        document.getElementById('leadSegment').value = lead.segment || 'Hot';
+        document.getElementById('leadRequirement').value = lead.requirement || '';
+        document.getElementById('leadLocation').value = lead.location || '';
+        document.getElementById('leadBudget').value = lead.budget || '';
+        document.getElementById('leadNextFollow').value = lead.nextFollow || '';
+        document.getElementById('leadNotes').value = lead.notes || '';
+      } else {
+        editingLeadId = null;
+        if (title) title.textContent = 'Add lead';
+        document.getElementById('leadName').value = '';
+        document.getElementById('leadPhone').value = '';
+        document.getElementById('leadSegment').value = 'Hot';
+        document.getElementById('leadRequirement').value = '';
+        document.getElementById('leadLocation').value = '';
+        document.getElementById('leadBudget').value = '';
+        document.getElementById('leadNextFollow').value = '';
+        document.getElementById('leadNotes').value = '';
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeLeadModal() {
+      document.getElementById('leadModal').classList.add('hidden');
+      editingLeadId = null;
+    }
+
+    function openLeadDetail(id) {
+      const modal = document.getElementById('leadDetailModal');
+      const body = document.getElementById('leadDetailBody');
+      const lead = state.leads.find(l => l.id === id);
+      if (!lead) return;
+      currentLeadId = id;
+
+      const followups = (lead.followups || []).slice().sort((a,b) => (a.at || 0) > (b.at || 0) ? 1 : -1);
+
+      let html = '';
+      html += '<div class="field-group"><div class="field-label">Name</div><div>' + (lead.name || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Phone</div><div>' + (lead.phone || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Segment</div><div>' + (lead.segment || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Requirement</div><div>' + (lead.requirement || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Location</div><div>' + (lead.location || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Budget</div><div>' + (lead.budget || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Next follow-up</div><div>' +
+              (lead.nextFollow ? formatDateTime(lead.nextFollow) : '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Notes</div><div>' + (lead.notes || '—') + '</div></div>';
+
+      html += '<div class="section-label" style="margin-top:10px;">Follow-up history</div>';
+      if (!followups.length) {
+        html += '<div style="font-size:11px;color:var(--muted);margin-top:2px;">No follow-up notes yet.</div>';
+      } else {
+        html += '<div class="history-list">';
+        followups.forEach(f => {
+          html += '<div class="history-item"><span class="history-date">' +
+                  formatDateTime(f.at) +
+                  '</span> - <span>' + (f.note || '') + '</span></div>';
+        });
+        html += '</div>';
+      }
+
+      body.innerHTML = html;
+      document.getElementById('detailFollowNote').value = '';
+      document.getElementById('detailFollowWhen').value = '';
+      modal.classList.remove('hidden');
+    }
+
+    function closeLeadDetail() {
+      document.getElementById('leadDetailModal').classList.add('hidden');
+      currentLeadId = null;
+    }
+
+    function openProjectModal(project) {
+      const modal = document.getElementById('projectModal');
+      const title = document.getElementById('projectModalTitle');
+
+      if (project) {
+        editingProjectId = project.id;
+        if (title) title.textContent = 'Edit project';
+
+        document.getElementById('projectName').value = project.name || '';
+        document.getElementById('projectLocation').value = project.location || '';
+        document.getElementById('projectConfig').value = project.config || '';
+        document.getElementById('projectPrice').value = project.price || '';
+        document.getElementById('projectHighlights').value = project.highlights || '';
+        document.getElementById('projectConfigDetail').value = project.configDetail || '';
+
+        document.getElementById('projectLandAreaValue').value = project.landAreaValue || '';
+        document.getElementById('projectLandAreaUnit').value = project.landAreaUnit || 'sq.yard';
+        document.getElementById('projectArchitect').value = project.architect || '';
+
+        document.getElementById('rateBaseValue').value = project.rateBaseValue || '';
+        document.getElementById('rateBaseUnit').value = project.rateBaseUnit || 'per sq.ft';
+        document.getElementById('rateOtherValue').value = project.rateOtherValue || '';
+        document.getElementById('rateOtherUnit').value = project.rateOtherUnit || 'per sq.ft';
+        document.getElementById('rateMaintDeposit').value = project.rateMaintDeposit || '';
+        document.getElementById('rateRunningValue').value = project.rateRunningValue || '';
+        document.getElementById('rateRunningTerm').value = project.rateRunningTerm || '';
+        document.getElementById('rateLegalFees').value = project.rateLegalFees || '';
+        document.getElementById('rateFloorRise').value = project.rateFloorRise || '';
+        document.getElementById('ratePlcValue').value = project.ratePlcValue || '';
+        document.getElementById('ratePlcType').value = project.ratePlcType || 'flat';
+        document.getElementById('rateSaleDeed').value = project.rateSaleDeed || '';
+        document.getElementById('rateStampDuty').value = project.rateStampDuty || '';
+        document.getElementById('rateRegistration').value = project.rateRegistration || '';
+        document.getElementById('rateGovtOther').value = project.rateGovtOther || '';
+      } else {
+        editingProjectId = null;
+        if (title) title.textContent = 'Add project';
+
+        document.getElementById('projectName').value = '';
+        document.getElementById('projectLocation').value = '';
+        document.getElementById('projectConfig').value = '';
+        document.getElementById('projectPrice').value = '';
+        document.getElementById('projectHighlights').value = '';
+        document.getElementById('projectConfigDetail').value = '';
+
+        document.getElementById('projectLandAreaValue').value = '';
+        document.getElementById('projectLandAreaUnit').value = 'sq.yard';
+        document.getElementById('projectArchitect').value = '';
+
+        document.getElementById('rateBaseValue').value = '';
+        document.getElementById('rateBaseUnit').value = 'per sq.ft';
+        document.getElementById('rateOtherValue').value = '';
+        document.getElementById('rateOtherUnit').value = 'per sq.ft';
+        document.getElementById('rateMaintDeposit').value = '';
+        document.getElementById('rateRunningValue').value = '';
+        document.getElementById('rateRunningTerm').value = '';
+        document.getElementById('rateLegalFees').value = '';
+        document.getElementById('rateFloorRise').value = '';
+        document.getElementById('ratePlcValue').value = '';
+        document.getElementById('ratePlcType').value = 'flat';
+        document.getElementById('rateSaleDeed').value = '';
+        document.getElementById('rateStampDuty').value = '';
+        document.getElementById('rateRegistration').value = '';
+        document.getElementById('rateGovtOther').value = '';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeProjectModal() {
+      document.getElementById('projectModal').classList.add('hidden');
+      editingProjectId = null;
+    }
+
+    function openProjectDetail(id) {
+      const modal = document.getElementById('projectDetailModal');
+      const body = document.getElementById('projectDetailBody');
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+      currentProjectId = id;
+
+      let html = '';
+
+      html += '<div class="field-group"><div class="field-label">Project name</div><div>' +
+              (project.name || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Location</div><div>' +
+              (project.location || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Configuration (short)</div><div>' +
+              (project.config || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Price range</div><div>' +
+              (project.price || '—') + '</div></div>';
+      html += '<div class="field-group"><div class="field-label">Highlights</div><div>' +
+              (project.highlights || '—') + '</div></div>';
+
+      html += '<div class="field-group"><div class="field-label">Configurations & sizes</div><div>' +
+              (project.configDetail || '—') + '</div></div>';
+
+      let land = '—';
+      if (project.landAreaValue) {
+        land = project.landAreaValue + ' ' + (project.landAreaUnit || '');
+      }
+      html += '<div class="field-group"><div class="field-label">Land area</div><div>' +
+              land + '</div></div>';
+
+      html += '<div class="field-group"><div class="field-label">Architect</div><div>' +
+              (project.architect || '—') + '</div></div>';
+
+      html += '<div class="section-label" style="margin-top:10px;">Rate details</div>';
+
+      const rateRow = (label, val) =>
+        '<div class="field-group"><div class="field-label">' + label + '</div><div>' +
+        (val || '—') + '</div></div>';
+
+      let baseRate = '';
+      if (project.rateBaseValue) {
+        baseRate = project.rateBaseValue + (project.rateBaseUnit ? ' ' + project.rateBaseUnit : '');
+      }
+      html += rateRow('Base rate', baseRate);
+
+      let otherRate = '';
+      if (project.rateOtherValue) {
+        otherRate = project.rateOtherValue + (project.rateOtherUnit ? ' ' + project.rateOtherUnit : '');
+      }
+      html += rateRow('Other expense package', otherRate);
+
+      html += rateRow('Maintenance deposit', project.rateMaintDeposit);
+
+      let runMaint = '';
+      if (project.rateRunningValue || project.rateRunningTerm) {
+        runMaint = (project.rateRunningValue || '') +
+                   (project.rateRunningTerm ? ' ' + project.rateRunningTerm : '';
+      }
+      html += rateRow('Running maintenance', runMaint);
+
+      html += rateRow('Legal fees', project.rateLegalFees);
+      html += rateRow('Floor rising charge', project.rateFloorRise);
+
+      let plcText = '';
+      if (project.ratePlcValue) {
+        plcText = project.ratePlcValue + (project.ratePlcType ? ' ' + project.ratePlcType : '');
+      }
+      html += rateRow('Prime location charge (PLC)', plcText);
+
+      html += rateRow('Sale deed value', project.rateSaleDeed);
+      html += rateRow('Stamp duty', project.rateStampDuty);
+      html += rateRow('Registration', project.rateRegistration);
+      html += rateRow('Other govt. charges', project.rateGovtOther);
+
+      body.innerHTML = html;
+      modal.classList.remove('hidden');
+    }
+
+    function closeProjectDetail() {
+      document.getElementById('projectDetailModal').classList.add('hidden');
+      currentProjectId = null;
+    }
+
+    function exportLeadsAsCsv() {
+      if (!state.leads.length) {
+        alert('No leads to export yet.');
+        return;
+      }
+      const header = ['Name','Phone','Segment','Requirement','Location','Budget','NextFollow','Notes'];
+      const rows = state.leads.map(l => [
+        l.name || '',
+        l.phone || '',
+        l.segment || '',
+        l.requirement || '',
+        l.location || '',
+        l.budget || '',
+        l.nextFollow || '',
+        l.notes || ''
+      ]);
+      const all = [header, ...rows];
+      const csv = all.map(r => r.map(field => '"' + String(field).replace(/"/g,'""') + '"').join(',')).join('\\r\\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'vamika-leads.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportLeadsAsExcel() {
+      if (!state.leads.length) {
+        alert('No leads to export yet.');
+        return;
+      }
+      const header = ['Name','Phone','Segment','Requirement','Location','Budget','NextFollow','Notes'];
+      const rows = state.leads.map(l => [
+        l.name || '',
+        l.phone || '',
+        l.segment || '',
+        l.requirement || '',
+        l.location || '',
+        l.budget || '',
+        l.nextFollow || '',
+        l.notes || ''
+      ]);
+      const all = [header, ...rows];
+      const csv = all.map(r => r.map(field => '"' + String(field).replace(/"/g,'""') + '"').join(',')).join('\\r\\n');
+      const blob = new Blob([csv], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'vamika-leads.xls';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadJsonBackup() {
+      const data = {
+        leads: state.leads,
+        projects: state.projects,
+        profile: state.profile
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'vamika-crm-backup.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function restoreFromJson(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          state.leads = data.leads || [];
+          state.projects = data.projects || [];
+          if (data.profile) Object.assign(state.profile, data.profile);
+          saveLeads();
+          saveProjects();
+          saveProfile();
+          applyProfileToUI();
+          renderLeads(document.getElementById('leadSearch').value);
+          renderProjects(document.getElementById('projectSearch').value);
+          renderFollowups();
+          alert('Backup restored successfully.');
+        } catch (err) {
+          console.error(err);
+          alert('Could not restore backup. File may be invalid.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function activateSection(tabKey) {
+      const map = {
+        leads: 'tab-leads',
+        projects: 'tab-projects',
+        followups: 'tab-followups',
+        settings: 'tab-settings'
+      };
+      Object.entries(map).forEach(([key,id]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (key === tabKey) el.classList.add('active');
+        else el.classList.remove('active');
+      });
+
+      document.querySelectorAll('.sidebar-item').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.section === tabKey);
+      });
+
+      document.querySelectorAll('.section').forEach(sec => {
+        if (sec.id === 'section-' + tabKey) sec.classList.add('active');
+        else sec.classList.remove('active');
+      });
+    }
+
+    function setupSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const toggle = document.getElementById('menuToggle');
+
+      function open() {
+        sidebar.classList.add('open');
+        overlay.classList.add('open');
+      }
+
+      function close() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      }
+
+      toggle.addEventListener('click', open);
+      overlay.addEventListener('click', close);
+
+      document.querySelectorAll('.sidebar-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.section;
+          activateSection(key);
+          close();
+        });
+      });
+
+      activateSection('leads');
+    }
+
+    function setupPWA() {
+      const installBtn = document.getElementById('installBtn');
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'inline-flex';
+      });
+
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        try {
+          await deferredPrompt.userChoice;
+        } catch (e) {
+          console.error(e);
+        }
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+      });
+    }
+
+    function setupTheme() {
+      const btnLight = document.getElementById('btnLight');
+      const btnDark = document.getElementById('btnDark');
+      let saved = localStorage.getItem(STORAGE_KEYS.theme) || 'dark';
+
+      function apply(mode) {
+        saved = mode;
+        localStorage.setItem(STORAGE_KEYS.theme, mode);
+
+        if (mode === 'light') {
+          document.body.classList.add('theme-light');
+          document.body.classList.remove('theme-dark');
+          if (btnLight) btnLight.classList.add('active');
+          if (btnDark) btnDark.classList.remove('active');
+        } else {
+          document.body.classList.add('theme-dark');
+          document.body.classList.remove('theme-light');
+          if (btnDark) btnDark.classList.add('active');
+          if (btnLight) btnLight.classList.remove('active');
+        }
+
+        applyAccentTheme(state.profile.accent || '#3B82F6', 70);
+      }
+
+      if (btnLight) btnLight.addEventListener('click', () => apply('light'));
+      if (btnDark) btnDark.addEventListener('click', () => apply('dark'));
+
+      apply(saved);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      setupTheme();
+      applyProfileToUI();
+      updateStats();
+      renderLeads();
+      renderProjects();
+      renderFollowups();
+      setupSidebar();
+      setupPWA();
+
+      document.getElementById('btnNewLead').addEventListener('click', () => openLeadModal(null));
+      document.querySelectorAll('[data-close-lead]').forEach(btn => {
+        btn.addEventListener('click', closeLeadModal);
+      });
+
+      document.querySelectorAll('[data-close-detail]').forEach(btn => {
+        btn.addEventListener('click', closeLeadDetail);
+      });
+
+      document.getElementById('btnNewProject').addEventListener('click', () => openProjectModal(null));
+      document.querySelectorAll('[data-close-project]').forEach(btn => {
+        btn.addEventListener('click', closeProjectModal);
+      });
+
+      document.querySelectorAll('[data-close-project-detail]').forEach(btn => {
+        btn.addEventListener('click', closeProjectDetail);
+      });
+
+      document.getElementById('btnSaveLead').addEventListener('click', () => {
+        const name = document.getElementById('leadName').value.trim();
+        const phone = document.getElementById('leadPhone').value.trim();
+        if (!name || !phone) {
+          alert('Name and phone are required.');
+          return;
+        }
+        if (editingLeadId) {
+          const lead = state.leads.find(l => l.id === editingLeadId);
+          if (lead) {
+            lead.name = name;
+            lead.phone = phone;
+            lead.segment = document.getElementById('leadSegment').value;
+            lead.requirement = document.getElementById('leadRequirement').value.trim();
+            lead.location = document.getElementById('leadLocation').value.trim();
+            lead.budget = document.getElementById('leadBudget').value.trim();
+            lead.nextFollow = document.getElementById('leadNextFollow').value;
+            lead.notes = document.getElementById('leadNotes').value.trim();
+          }
+        } else {
+          const lead = {
+            id: Date.now(),
+            name,
+            phone,
+            segment: document.getElementById('leadSegment').value,
+            requirement: document.getElementById('leadRequirement').value.trim(),
+            location: document.getElementById('leadLocation').value.trim(),
+            budget: document.getElementById('leadBudget').value.trim(),
+            nextFollow: document.getElementById('leadNextFollow').value,
+            notes: document.getElementById('leadNotes').value.trim(),
+            followups: []
+          };
+          state.leads.unshift(lead);
+        }
+        saveLeads();
+        closeLeadModal();
+        renderLeads(document.getElementById('leadSearch').value);
+        renderFollowups();
+      });
+
+      document.getElementById('leadSearch').addEventListener('input', (e) => {
+        renderLeads(e.target.value);
+      });
+
+      document.getElementById('projectSearch').addEventListener('input', (e) => {
+        renderProjects(e.target.value);
+      });
+
+      document.getElementById('btnDetailWhatsapp').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead || !lead.phone) return;
+        const msg = encodeURIComponent('Hello ' + (lead.name || '') + ',\nThis is ' +
+          ((state.profile && state.profile.ownerName) || 'Vamika Estate') + '.');
+        window.open('https://wa.me/91' + lead.phone.replace(/\\D/g, '') + '?text=' + msg, '_blank');
+      });
+
+      document.getElementById('btnDetailCall').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead || !lead.phone) return;
+        window.location.href = 'tel:' + lead.phone.replace(/\\D/g, '');
+      });
+
+      document.getElementById('btnDetailEdit').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead) return;
+        closeLeadDetail();
+        openLeadModal(lead);
+      });
+
+      document.getElementById('btnDetailDelete').addEventListener('click', () => {
+        if (!confirm('Delete this lead?')) return;
+        state.leads = state.leads.filter(l => l.id !== currentLeadId);
+        saveLeads();
+        closeLeadDetail();
+        renderLeads(document.getElementById('leadSearch').value);
+        renderFollowups();
+      });
+
+      document.getElementById('btnDetailAddFollow').addEventListener('click', () => {
+        const lead = state.leads.find(l => l.id === currentLeadId);
+        if (!lead) return;
+        const whenVal = document.getElementById('detailFollowWhen').value || new Date().toISOString();
+        const note = document.getElementById('detailFollowNote').value.trim();
+        if (!note) {
+          alert('Please enter a note.');
+          return;
+        }
+        if (!lead.followups) lead.followups = [];
+        lead.followups.push({
+          id: Date.now(),
+          at: whenVal,
+          note
+        });
+        lead.nextFollow = whenVal;
+        saveLeads();
+        document.getElementById('detailFollowNote').value = '';
+        document.getElementById('detailFollowWhen').value = '';
+        openLeadDetail(currentLeadId);
+        renderLeads(document.getElementById('leadSearch').value);
+        renderFollowups();
+      });
+
+      document.getElementById('btnProjectWhatsapp').addEventListener('click', () => {
+        const project = state.projects.find(p => p.id === currentProjectId);
+        if (!project) return;
+        const owner = (state.profile && state.profile.ownerName) || 'Vamika Estate';
+        let msg = 'Project: ' + (project.name || '') + '\\n';
+        if (project.config) msg += 'Config: ' + project.config + '\\n';
+        if (project.price) msg += 'Price: ' + project.price + '\\n';
+        if (project.location) msg += 'Location: ' + project.location + '\\n';
+        if (project.configDetail) msg += '\\nSizes:\\n' + project.configDetail + '\\n';
+        msg += '\\nShared by ' + owner;
+        window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+      });
+
+      document.getElementById('btnProjectDelete').addEventListener('click', () => {
+        if (!confirm('Delete this project?')) return;
+        state.projects = state.projects.filter(p => p.id !== currentProjectId);
+        saveProjects();
+        closeProjectDetail();
+        renderProjects(document.getElementById('projectSearch').value);
+      });
+
+      document.getElementById('btnProjectEdit').addEventListener('click', () => {
+        const project = state.projects.find(p => p.id === currentProjectId);
+        if (!project) return;
+        closeProjectDetail();
+        openProjectModal(project);
+      });
+
+      document.getElementById('btnSaveProject').addEventListener('click', () => {
+        const name = document.getElementById('projectName').value.trim();
+        if (!name) {
+          alert('Project name is required.');
+          return;
+        }
+
+        const location = document.getElementById('projectLocation').value.trim();
+        const config = document.getElementById('projectConfig').value.trim();
+        const price = document.getElementById('projectPrice').value.trim();
+        const highlights = document.getElementById('projectHighlights').value.trim();
+        const configDetail = document.getElementById('projectConfigDetail').value.trim();
+
+        const landAreaValue = document.getElementById('projectLandAreaValue').value.trim();
+        const landAreaUnit = document.getElementById('projectLandAreaUnit').value;
+        const architect = document.getElementById('projectArchitect').value.trim();
+
+        const rateBaseValue = document.getElementById('rateBaseValue').value.trim();
+        const rateBaseUnit = document.getElementById('rateBaseUnit').value;
+        const rateOtherValue = document.getElementById('rateOtherValue').value.trim();
+        const rateOtherUnit = document.getElementById('rateOtherUnit').value;
+        const rateMaintDeposit = document.getElementById('rateMaintDeposit').value.trim();
+        const rateRunningValue = document.getElementById('rateRunningValue').value.trim();
+        const rateRunningTerm = document.getElementById('rateRunningTerm').value.trim();
+        const rateLegalFees = document.getElementById('rateLegalFees').value.trim();
+        const rateFloorRise = document.getElementById('rateFloorRise').value.trim();
+        const ratePlcValue = document.getElementById('ratePlcValue').value.trim();
+        const ratePlcType = document.getElementById('ratePlcType').value;
+        const rateSaleDeed = document.getElementById('rateSaleDeed').value.trim();
+        const rateStampDuty = document.getElementById('rateStampDuty').value.trim();
+        const rateRegistration = document.getElementById('rateRegistration').value.trim();
+        const rateGovtOther = document.getElementById('rateGovtOther').value.trim();
+
+        if (editingProjectId) {
+          const project = state.projects.find(p => p.id === editingProjectId);
+          if (project) {
+            project.name = name;
+            project.location = location;
+            project.config = config;
+            project.price = price;
+            project.highlights = highlights;
+            project.configDetail = configDetail;
+            project.landAreaValue = landAreaValue;
+            project.landAreaUnit = landAreaUnit;
+            project.architect = architect;
+            project.rateBaseValue = rateBaseValue;
+            project.rateBaseUnit = rateBaseUnit;
+            project.rateOtherValue = rateOtherValue;
+            project.rateOtherUnit = rateOtherUnit;
+            project.rateMaintDeposit = rateMaintDeposit;
+            project.rateRunningValue = rateRunningValue;
+            project.rateRunningTerm = rateRunningTerm;
+            project.rateLegalFees = rateLegalFees;
+            project.rateFloorRise = rateFloorRise;
+            project.ratePlcValue = ratePlcValue;
+            project.ratePlcType = ratePlcType;
+            project.rateSaleDeed = rateSaleDeed;
+            project.rateStampDuty = rateStampDuty;
+            project.rateRegistration = rateRegistration;
+            project.rateGovtOther = rateGovtOther;
+          }
+        } else {
+          const project = {
+            id: Date.now(),
+            name,
+            location,
+            config,
+            price,
+            highlights,
+            configDetail,
+            landAreaValue,
+            landAreaUnit,
+            architect,
+            rateBaseValue,
+            rateBaseUnit,
+            rateOtherValue,
+            rateOtherUnit,
+            rateMaintDeposit,
+            rateRunningValue,
+            rateRunningTerm,
+            rateLegalFees,
+            rateFloorRise,
+            ratePlcValue,
+            ratePlcType,
+            rateSaleDeed,
+            rateStampDuty,
+            rateRegistration,
+            rateGovtOther
+          };
+          state.projects.unshift(project);
+        }
+
+        saveProjects();
+        closeProjectModal();
+        renderProjects(document.getElementById('projectSearch').value);
+      });
+
+      document.getElementById('btnSaveProfile').addEventListener('click', () => {
+        state.profile.businessName = document.getElementById('businessName').value.trim() || 'Vamika Estate';
+        state.profile.ownerName = document.getElementById('ownerName').value.trim() || 'Hiren Gohel';
+        state.profile.phone = document.getElementById('ownerPhone').value.trim() || '7046869462';
+        let accentHex = document.getElementById('themeAccent').value.trim() || '#3B82F6';
+        if (!accentHex.startsWith('#')) accentHex = '#' + accentHex;
+        state.profile.accent = accentHex;
+        saveProfile();
+        alert('Profile saved.');
+      });
+
+      document.getElementById('btnExportCsv').addEventListener('click', exportLeadsAsCsv);
+      document.getElementById('btnExportExcel').addEventListener('click', exportLeadsAsExcel);
+      document.getElementById('btnDownloadJson').addEventListener('click', downloadJsonBackup);
+      document.getElementById('restoreFile').addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          restoreFromJson(e.target.files[0]);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
