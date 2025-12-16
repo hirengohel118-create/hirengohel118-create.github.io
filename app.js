@@ -102,18 +102,66 @@
     });
   }
 
-  // projects
-  function renderProjects(){
-    const list = $('projectsList'); list.innerHTML = '';
-    if(!projects.length) $('projectsEmpty').style.display='block'; else $('projectsEmpty').style.display='none';
-    projects.forEach((p, idx) => {
-      const c = document.createElement('div'); c.className='lead-card';
-      c.innerHTML = `<div class="lead-row"><div class="lead-left"><div class="lead-title">${p.name}</div><div class="lead-meta">${p.config} • ${p.location || ''}</div></div><div class="card-actions"><button class="small-btn delete">Delete</button></div></div>`;
-      list.appendChild(c);
-    });
-    $('totalProjects') && ($('totalProjects').innerText = projects.length);
+  // projects (FINAL FIX)
+function renderProjects(){
+  const list = $('projectsList');
+  list.innerHTML = '';
+
+  if(!projects.length){
+    $('projectsEmpty').style.display = 'block';
+    return;
+  } else {
+    $('projectsEmpty').style.display = 'none';
   }
 
+  projects.forEach((p, idx) => {
+    const card = document.createElement('div');
+    card.className = 'lead-card';
+
+    card.innerHTML = `
+      <div class="lead-row">
+        <div class="lead-left">
+          <div class="lead-title">${p.name}</div>
+          <div class="lead-meta">${p.config || 'No configuration'}</div>
+        </div>
+
+        <div class="card-actions">
+          <button class="small-btn wa">Share</button>
+          <button class="small-btn delete">Delete</button>
+        </div>
+      </div>
+    `;
+
+    // card tap → details
+    card.addEventListener('click', () => {
+      alert(
+`Project: ${p.name}
+
+BHK: ${p.config || '-'}
+Location: ${p.location || '-'}`
+      );
+    });
+
+    // share
+    card.querySelector('.wa').onclick = (e) => {
+      e.stopPropagation();
+      const msg = `🏢 ${p.name}\n🛏 ${p.config || ''}\n📍 ${p.location || ''}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+    };
+
+    // delete
+    card.querySelector('.delete').onclick = (e) => {
+      e.stopPropagation();
+      if(confirm('Delete this project?')){
+        projects.splice(idx,1);
+        localStorage.setItem('projects', JSON.stringify(projects));
+        renderProjects();
+      }
+    };
+
+    list.appendChild(card);
+  });
+}
   // forms & actions
   let editing = null;
   function openLeadForm(idx=null){
