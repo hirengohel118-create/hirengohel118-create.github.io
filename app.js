@@ -1,5 +1,6 @@
 
 (() => {
+  alert("NEW APP.JS LOADED");
   const $ = id => document.getElementById(id);
   const qsa = sel => document.querySelectorAll(sel);
 
