@@ -120,19 +120,18 @@ function renderProjects(){
     card.className = 'lead-card';
 
     card.innerHTML = `
-      <div class="lead-row">
-        <div class="lead-left">
-          <div class="lead-title">${p.name}</div>
-          <div class="lead-meta">${p.config || 'No configuration'}</div>
-        </div>
+  <div class="lead-row">
+    <div class="lead-left">
+      <div class="lead-title">${p.name}</div>
+      <div class="lead-meta">${p.config || 'No configuration'}</div>
+    </div>
 
-        <div class="card-actions">
-          <button class="small-btn wa">Share</button>
-          <button class="small-btn delete">Delete</button>
-        </div>
-      </div>
-    `;
-
+    <div class="card-actions">
+      <button class="wa" onclick="shareProject(${idx})">Share</button>
+      <button class="delete">Delete</button>
+    </div>
+  </div>
+`;
     // card tap → details
     card.addEventListener('click', () => {
       alert(
