@@ -1,4 +1,4 @@
-
+alert("NEW APP JS LOADED - EDIT FEATURE");
 // UPDATED APP.JS – Project Card Edit Details Added (RE-UPLOAD)
 (() => {
   const $ = id => document.getElementById(id);
